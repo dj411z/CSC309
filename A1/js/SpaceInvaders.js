@@ -4,11 +4,88 @@
 // --------------------------------------------------
 // --------------------------------------------------
 
+
+//Game class
+function Game() {
+
+  this.lives = 3;
+  //stack of states for game
+  this.states = [];
+
+  //width and height
+  this.width = 0;
+  this.height = 0;
+
+  //keep track of area for game
+  this.gameScreen = {left: 0, right: 0, top: 0, bottom: 0};
+
+  //game canvas to render to
+  this.gameCanvas = null;
+}
+
+Game.prototype.initGame = function(gameCanvas){
+  this.gameCanvas = gameCanvas;
+  this.width = gameCanvas.width;
+  this.height = gameCanvas.height;
+
+  //set game bounds?
+
+}
+
+//initial welcome state
+
+function welcomeState(canvas){
+  this.welcomemsg = "Welcome to Space Invaders";
+}
+
+//pause state
+
+function pauseState(canvas){
+  this.pausemsg = "Paused";
+}
+
+function gameoverState(canvas){
+  this.gameovermsg = "Game over";
+}
+
+function playState(canvas){
+  this.level = level;
+  this.lives = lives;
+
+  this.ship = null;
+  this.aliens = null;
+  this.lasers = null;
+  this.bombs = null;
+}
+
+function Ship(canvas, x, y){
+  this.context = canvas.getContext("2d");
+  this.x = x;
+  this.y = y;
+}
+
+function Laser(canvas, x, y, speed){
+  this.context = canvas.getContext("2d");
+  this.x = x;
+  this.y = y;
+  this.speed = speed;
+}
+
+function Bomb(canvas, x, y, speed){
+  this.context = canvas.getContext("2d");
+  this.x = x;
+  this.y = y;
+  this.speed = speed;
+}
+
 // This function stores the details for a single alien
 function Alien(canvas, x, y){
   this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
+
+  //store whether it is first or not (can drop bombs)
+  this.front = false;
 
   this.draw = function () {
 
@@ -75,6 +152,8 @@ function pauseGame(){
   context.fillStyle = "blue";
   context.font = "bold 40px Arial";
   context.fillText("Pause", 200, 250);
+
+  //press p again to unpause
 }
 
 // --------------------------------------------------
