@@ -2,15 +2,23 @@
 <html>
   <head>
   	<title>Space Invaders</title>
-  	<link rel="stylesheet" type="text/css" href="style.css">
-  	<script src="SpaceInvaders.js"></script>
+  	<script src="js/SpaceInvaders.js"></script>
+  	<link rel="stylesheet" type="text/css" href="css/style.css">
   </head>
-  <body background="bg.jpg">
-  	<div id="can" align="center">
-  		<canvas id="myCanvas" width="500" height="500"></canvas>
-  		<button onclick="newGame()">New Game</button>
-  		<button onclick="pauseGame()">Pause</button>
-  		<button onclick="quitGame()">Quit</button>
+  <body background="images/bg.jpg">
+  	<div id="currscore">
+  		<h2>Current Score: 0</h2>
   	</div>
+  	<div id="lives">
+  		<h2>Lives: 3</h2>
+  	</div>
+  	<div id="canvas">
+  		<canvas id="myCanvas" width="500" height="500"></canvas>
+  	</div>
+  	<ul id="menu">
+  		<li>Enter to Start</li>
+  		<li>P to Pause</li>
+  		<li>Q to Quit</li>
+  	</ul>
   </body>
 </html>
