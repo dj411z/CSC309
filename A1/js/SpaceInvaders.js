@@ -83,19 +83,23 @@ playState.prototype.draw = function(context){
   context.font = "bold 40px Arial";
   context.fillText("Play State!", 200, 250);
   */
-  this.Ship = new Ship(0, 0);
-  this.Ship.prototype.draw(context);
+  this.ship = new ship(0, 0);
+  this.ship.prototype.draw(context);
   //var invaders = [];
 
 }
 
-function Ship(canvas, x, y){
+playState.prototype.fireLaser = function(){
+  this.lasers.push(new Laser(this.ship.x, this.ship.y - 10, 10 /*speed*/));
+}
+
+function ship(canvas, x, y){
   this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
 }
 
-Ship.prototype.draw = function(context){
+ship.prototype.draw = function(context){
   var ship_img = new Image();
     
   ship_img.onload = function () {
@@ -103,6 +107,39 @@ Ship.prototype.draw = function(context){
   }
   
   ship_img.src = "images/alien.png"; // get the image from this URL
+}
+
+function checkShipAction(e) {
+    var event = window.event ? window.event : e;
+    console.log(event.keyCode);
+    canvas = document.getElementById("myCanvas");
+    context = canvas.getContext("2d");
+
+    ship.prototype.Shipaction(event.keyCode);
+}
+
+ship.prototype.Shipaction = function(actionKey){
+  //move left
+  if(actionKey == 37){
+    this.ship.x -= 1;
+  }
+
+  //move right
+  if(actionkey == 39){
+    this.ship.x += 1;
+  }
+
+  if(actionkey == 32){
+    this.fireLaser();
+  }
+
+  //keep ship in game bounds
+  if(this.ship.x < game.gameBounds.left) {
+      this.ship.x = game.gameBounds.left;
+  }
+  if(this.ship.x > game.gameBounds.right) {
+      this.ship.x = game.gameBounds.right;
+  }
 }
 
 function Laser(canvas, x, y, speed){
