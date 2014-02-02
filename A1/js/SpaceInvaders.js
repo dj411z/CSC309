@@ -9,8 +9,6 @@
 function Game() {
 
   this.lives = 3;
-  //stack of states for game
-  this.states = [];
 
   //width and height
   this.width = 0;
@@ -32,20 +30,41 @@ Game.prototype.initGame = function(gameCanvas){
 
 }
 
+
 //initial welcome state
 
 function welcomeState(canvas){
   this.welcomemsg = "Welcome to Space Invaders";
 }
 
-//pause state
-
-function pauseState(canvas){
-  this.pausemsg = "Paused";
+welcomeState.prototype.draw = function(context){
+  var img = new Image();
+    
+  img.onload = function () {
+    context.drawImage(img, -50, -10);
+  }
+  
+  img.src = "images/start.jpg"; // get the image from this URL
+  /*
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "blue";
+  context.font = "bold 40px Arial";
+  context.fillText("Welcome", 200, 250);
+  */
+    
 }
 
 function gameoverState(canvas){
   this.gameovermsg = "Game over";
+}
+
+gameoverState.prototype.draw = function(context){
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "blue";
+  context.font = "bold 40px Arial";
+  context.fillText("Game over!", 200, 250);
+    
 }
 
 function playState(canvas){
@@ -58,10 +77,32 @@ function playState(canvas){
   this.bombs = null;
 }
 
+playState.prototype.draw = function(context){
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  /*context.fillStyle = "blue";
+  context.font = "bold 40px Arial";
+  context.fillText("Play State!", 200, 250);
+  */
+  this.Ship = new Ship(0, 0);
+  this.Ship.prototype.draw(context);
+  //var invaders = [];
+
+}
+
 function Ship(canvas, x, y){
   this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
+}
+
+Ship.prototype.draw = function(context){
+  var ship_img = new Image();
+    
+  ship_img.onload = function () {
+    context.drawImage(ship_img, 100, 50);
+  }
+  
+  ship_img.src = "images/alien.png"; // get the image from this URL
 }
 
 function Laser(canvas, x, y, speed){
@@ -87,10 +128,11 @@ function Alien(canvas, x, y){
   //store whether it is first or not (can drop bombs)
   this.front = false;
 
-  this.draw = function () {
+  this.drawAliens = function () {
 
     var image = new Image();
-
+    //draw aliens every period of time
+    //window.setInterval("drawAliens()", 100)
     image.onload = function() {
       context.drawImage(image, this.x, this.y);
     }
@@ -113,16 +155,12 @@ var context;
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
-  document.onkeydown = checkKey;
   context = canvas.getContext("2d");
   
-  var img = new Image();
+  welcomeState.prototype.draw(context);
+
+  document.onkeydown = checkNewGame;
     
-  img.onload = function () {
-    context.drawImage(img, -50, -10);
-  }
-  
-  img.src = "images/start.jpg"; // get the image from this URL    
 }
 
 // --------------------------------------------------
@@ -147,14 +185,6 @@ function newGame(){
 
 }
 
-function pauseGame(){
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "blue";
-  context.font = "bold 40px Arial";
-  context.fillText("Pause", 200, 250);
-
-  //press p again to unpause
-}
 
 // --------------------------------------------------
 // --------------------------------------------------
@@ -169,16 +199,14 @@ function drawAliens(){
   }
 }
 
-function checkKey(e) {
+
+function checkNewGame(e) {
     var event = window.event ? window.event : e;
     console.log(event.keyCode);
+    canvas = document.getElementById("myCanvas");
+    context = canvas.getContext("2d");
+
     if (event.keyCode == 13) {
-        newGame();
-    }
-    else if (event.keyCode == 80){
-        pauseGame();
-    }
-    else if (event.keyCode == 81){
-        quitGame();
+        playState.prototype.draw(context);
     }
 }
