@@ -33,11 +33,13 @@ Game.prototype.initGame = function(gameCanvas){
 
 //initial welcome state
 
-function welcomeState(canvas){
+function WelcomeState(canvas){
+  this.context = canvas.getContext("2d");
   this.welcomemsg = "Welcome to Space Invaders";
 }
 
-welcomeState.prototype.draw = function(context){
+WelcomeState.prototype.draw = function(){
+
   var img = new Image();
     
   img.onload = function () {
@@ -45,80 +47,65 @@ welcomeState.prototype.draw = function(context){
   }
   
   img.src = "images/start.jpg"; // get the image from this URL
-  /*
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "blue";
-  context.font = "bold 40px Arial";
-  context.fillText("Welcome", 200, 250);
-  */
     
 }
 
-function gameoverState(canvas){
+function GameoverState(canvas){
+  this.context = canvas.getContext("2d");
   this.gameovermsg = "Game over";
 }
 
-gameoverState.prototype.draw = function(context){
+GameoverState.prototype.draw = function(){
 
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "blue";
-  context.font = "bold 40px Arial";
-  context.fillText("Game over!", 200, 250);
+  this.context.clearRect(0, 0, canvas.width, canvas.height);
+  this.context.fillStyle = "blue";
+  this.context.font = "bold 40px Arial";
+  this.context.fillText("Game over!", 200, 250);
     
 }
 
-function playState(canvas){
+function PlayState(canvas, level, lives){
+  this.context = canvas.getContext("2d");
   this.level = level;
   this.lives = lives;
 
-  this.ship = null;
-  this.aliens = null;
-  this.lasers = null;
-  this.bombs = null;
+  this.ship = new Ship(canvas, 500, 100);
+  this.aliens = [];
+  this.lasers = [];
 }
 
-playState.prototype.draw = function(context){
+PlayState.prototype.draw = function(){
   context.clearRect(0, 0, canvas.width, canvas.height);
-  /*context.fillStyle = "blue";
-  context.font = "bold 40px Arial";
-  context.fillText("Play State!", 200, 250);
-  */
-  this.ship = new ship(0, 0);
-  this.ship.prototype.draw(context);
-  //var invaders = [];
-
+  this.ship.draw();
 }
 
-playState.prototype.fireLaser = function(){
+PlayState.prototype.fireLaser = function(){
   this.lasers.push(new Laser(this.ship.x, this.ship.y - 10, 10 /*speed*/));
 }
 
-function ship(canvas, x, y){
-  this.context = canvas.getContext("2d");
+function Ship(canvas, x, y){
+  //this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
 }
 
-ship.prototype.draw = function(context){
+Ship.prototype.draw = function(){
+
   var ship_img = new Image();
     
   ship_img.onload = function () {
-    context.drawImage(ship_img, 100, 50);
+    context.drawImage(ship_img, this.x, this.y);
   }
   
-  ship_img.src = "images/alien.png"; // get the image from this URL
+  ship_img.src = "images/ship.bmp"; // get the image from this URL
 }
 
 function checkShipAction(e) {
     var event = window.event ? window.event : e;
-    console.log(event.keyCode);
-    canvas = document.getElementById("myCanvas");
-    context = canvas.getContext("2d");
-
-    ship.prototype.Shipaction(event.keyCode);
+    Ship.prototype.Shipaction(event.keyCode);
 }
 
-ship.prototype.Shipaction = function(actionKey){
+Ship.prototype.Shipaction = function(actionKey){
   //move left
   if(actionKey == 37){
     this.ship.x -= 1;
@@ -149,13 +136,6 @@ function Laser(canvas, x, y, speed){
   this.speed = speed;
 }
 
-function Bomb(canvas, x, y, speed){
-  this.context = canvas.getContext("2d");
-  this.x = x;
-  this.y = y;
-  this.speed = speed;
-}
-
 // This function stores the details for a single alien
 function Alien(canvas, x, y){
   this.context = canvas.getContext("2d");
@@ -171,7 +151,7 @@ function Alien(canvas, x, y){
     //draw aliens every period of time
     //window.setInterval("drawAliens()", 100)
     image.onload = function() {
-      context.drawImage(image, this.x, this.y);
+      this.context.drawImage(image, this.x, this.y);
     }
     image.src = "images/alien.png";
 
@@ -185,8 +165,6 @@ function Alien(canvas, x, y){
 // --------------------------------------------------
 // --------------------------------------------------
 
-var aliens = []; //aliens array holds alien objects
-
 var canvas;
 var context;
 
@@ -194,34 +172,12 @@ window.onload = function() {
   canvas = document.getElementById("myCanvas");
   context = canvas.getContext("2d");
   
-  welcomeState.prototype.draw(context);
+  var welcomeState = new WelcomeState(canvas);
+  welcomeState.draw();
 
   document.onkeydown = checkNewGame;
     
 }
-
-// --------------------------------------------------
-// --------------------------------------------------
-//  Different States Functions 
-// --------------------------------------------------
-// --------------------------------------------------
-
-//Clears canvas and aliens array and starts a new game
-function newGame(){
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  aliens = [];
-  x = 100;
-  y = 100;
-  for(var i=0; i<6; i++){
-    var alien = new Alien(canvas, x, y);
-    aliens.push(alien);
-    x += 40;
-  }
-
-  drawAliens();
-
-}
-
 
 // --------------------------------------------------
 // --------------------------------------------------
@@ -239,11 +195,10 @@ function drawAliens(){
 
 function checkNewGame(e) {
     var event = window.event ? window.event : e;
-    console.log(event.keyCode);
     canvas = document.getElementById("myCanvas");
-    context = canvas.getContext("2d");
 
     if (event.keyCode == 13) {
-        playState.prototype.draw(context);
+        var ps = new PlayState(canvas, 1, 3);
+        ps.draw(canvas);
     }
 }
