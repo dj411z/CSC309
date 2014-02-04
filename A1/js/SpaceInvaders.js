@@ -69,7 +69,7 @@ function PlayState(canvas, level, lives){
   this.level = level;
   this.lives = lives;
 
-  this.ship = new Ship(canvas, 500, 100);
+  this.ship = new Ship(canvas, 100, 100);
   this.aliens = [];
   this.lasers = [];
 }
@@ -89,12 +89,16 @@ function Ship(canvas, x, y){
   this.y = y;
 }
 
+Ship.prototype.getX = function(){return this.x};
+Ship.prototype.getY = function(){return this.y};
+
 Ship.prototype.draw = function(){
 
   var ship_img = new Image();
     
   ship_img.onload = function () {
-    context.drawImage(ship_img, this.x, this.y);
+    //can just hardcode start for now
+    context.drawImage(ship_img, 100, 100);
   }
   
   ship_img.src = "images/ship.bmp"; // get the image from this URL
@@ -167,6 +171,8 @@ function Alien(canvas, x, y){
 
 var canvas;
 var context;
+var shipx = Ship.prototype.getX();
+var shipy = Ship.prototype.getY();
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
