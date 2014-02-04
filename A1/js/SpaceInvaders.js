@@ -69,13 +69,15 @@ function PlayState(canvas, level, lives){
   this.level = level;
   this.lives = lives;
 
-  this.ship = new Ship(canvas, 100, 100);
-  this.aliens = [];
+  this.ship = ship;
+  this.aliens = aliens;
   this.lasers = [];
 }
 
 PlayState.prototype.draw = function(){
   context.clearRect(0, 0, canvas.width, canvas.height);
+  initAliens();
+  drawAliens();
   this.ship.draw();
 }
 
@@ -89,48 +91,64 @@ function Ship(canvas, x, y){
   this.y = y;
 }
 
-Ship.prototype.getX = function(){return this.x};
-Ship.prototype.getY = function(){return this.y};
+// Ship.prototype.getX = function(){return this.x};
+// Ship.prototype.getY = function(){return this.y};
 
 Ship.prototype.draw = function(){
 
-  var ship_img = new Image();
+  // Draw the square.
+    context.beginPath();
+    context.strokeStyle = "blue";
+    context.fillStyle = "blue";
+    context.rect(this.x, this.y, 20, 20);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+
+  // var ship_img = new Image();
     
-  ship_img.onload = function () {
-    //can just hardcode start for now
-    context.drawImage(ship_img, 100, 100);
-  }
+  // ship_img.onload = function () {
+  //   //can just hardcode start for now
+  //   context.drawImage(ship_img, 250, 400);
+  // }
   
-  ship_img.src = "images/ship.bmp"; // get the image from this URL
+  // ship_img.src = "images/ship.bmp"; // get the image from this URL
 }
 
 function checkShipAction(e) {
     var event = window.event ? window.event : e;
-    Ship.prototype.Shipaction(event.keyCode);
+    ship.shipaction(event.keyCode);
+
 }
 
-Ship.prototype.Shipaction = function(actionKey){
+function moveShip(ship, actionKey){
+
   //move left
   if(actionKey == 37){
-    this.ship.x -= 1;
+    ship.x -= 10;
   }
-
   //move right
-  if(actionkey == 39){
-    this.ship.x += 1;
+  if(actionKey == 39){
+    ship.x += 10;
   }
 
-  if(actionkey == 32){
-    this.fireLaser();
+  if(actionKey == 32){
+    ship.fireLaser();
   }
 
   //keep ship in game bounds
-  if(this.ship.x < game.gameBounds.left) {
-      this.ship.x = game.gameBounds.left;
+  if(ship.x < 0) {
+      ship.x = 0;
   }
-  if(this.ship.x > game.gameBounds.right) {
-      this.ship.x = game.gameBounds.right;
+  if(ship.x >= canvas.width - 20) {
+      ship.x = canvas.width - 20;
   }
+
+  
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  ship.draw();
+  drawAliens();
 }
 
 function Laser(canvas, x, y, speed){
@@ -142,26 +160,39 @@ function Laser(canvas, x, y, speed){
 
 // This function stores the details for a single alien
 function Alien(canvas, x, y){
-  this.context = canvas.getContext("2d");
+  //this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
-
-  //store whether it is first or not (can drop bombs)
-  this.front = false;
-
-  this.drawAliens = function () {
-
-    var image = new Image();
-    //draw aliens every period of time
-    //window.setInterval("drawAliens()", 100)
-    image.onload = function() {
-      this.context.drawImage(image, this.x, this.y);
-    }
-    image.src = "images/alien.png";
-
-  }
-
 }
+
+function initAliens(){
+
+    for (var i = 0; i <= 29; i++){
+      var alien = new Alien(canvas, alienX, alienY);
+      aliens.push(alien);
+      if (alienX == 400){
+        alienX = 50;
+        alienY = alienY + 25; 
+      }
+      else{
+        alienX += 25;
+      }
+    }
+}
+Alien.prototype.draw = function () {
+
+    // Draw the square.
+    context.beginPath();
+    context.strokeStyle = "red";
+    context.fillStyle = "red";
+    context.rect(this.x, this.y, 20, 20);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+}
+
+
 
 // --------------------------------------------------
 // --------------------------------------------------
@@ -171,8 +202,15 @@ function Alien(canvas, x, y){
 
 var canvas;
 var context;
-var shipx = Ship.prototype.getX();
-var shipy = Ship.prototype.getY();
+var aliens = [];
+var ship = new Ship(canvas, 250, 400);
+
+var alienX = 50;
+var alienY = 50;
+
+
+// var shipx = Ship.prototype.getX();
+// var shipy = Ship.prototype.getY();
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
@@ -182,9 +220,20 @@ window.onload = function() {
   welcomeState.draw();
 
   document.onkeydown = checkNewGame;
+
+
     
 }
 
+window.addEventListener("keydown", function keydown(e) {
+    var keycode = e.which || window.event.keycode;
+    //  Supress further processing of left/right/space (37/29/32)
+    if(keycode == 37 || keycode == 39 || keycode == 32) {
+        e.preventDefault();
+        moveShip(ship, keycode);
+    }
+    
+});
 // --------------------------------------------------
 // --------------------------------------------------
 // Helper Functions
@@ -197,7 +246,6 @@ function drawAliens(){
     aliens[i].draw();
   }
 }
-
 
 function checkNewGame(e) {
     var event = window.event ? window.event : e;
