@@ -71,7 +71,7 @@ function PlayState(canvas, level, lives){
 
   this.ship = ship;
   this.aliens = aliens;
-  this.lasers = [];
+  this.lasers = lasers;
 }
 
 PlayState.prototype.draw = function(){
@@ -81,8 +81,8 @@ PlayState.prototype.draw = function(){
   this.ship.draw();
 }
 
-PlayState.prototype.fireLaser = function(){
-  this.lasers.push(new Laser(this.ship.x, this.ship.y - 10, 10 /*speed*/));
+function fireLaser (){
+  lasers.push(new Laser(ship.x, ship.y - 10, 5 /*speed*/));
 }
 
 function Ship(canvas, x, y){
@@ -122,7 +122,7 @@ function checkShipAction(e) {
 
 }
 
-function moveShip(ship, actionKey){
+function shipAction(ship, actionKey){
 
   //move left
   if(actionKey == 37){
@@ -134,7 +134,8 @@ function moveShip(ship, actionKey){
   }
 
   if(actionKey == 32){
-    ship.fireLaser();
+    console.log("fire");
+    fireLaser();
   }
 
   //keep ship in game bounds
@@ -152,12 +153,33 @@ function moveShip(ship, actionKey){
 }
 
 function Laser(canvas, x, y, speed){
-  this.context = canvas.getContext("2d");
+  //this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
   this.speed = speed;
 }
 
+Laser.prototype.draw = function (){
+
+  // Draw the square.
+    context.beginPath();
+    context.strokeStyle = "red";
+    context.fillStyle = "red";
+    context.rect(this.x, this.y, 10, 10);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+
+}
+
+function moveLasers(){
+
+  for(var i=0; i<lasers.length; i++){
+      lasers[i].y -= 10;
+  }
+
+}
 // This function stores the details for a single alien
 function Alien(canvas, x, y){
   //this.context = canvas.getContext("2d");
@@ -203,6 +225,7 @@ Alien.prototype.draw = function () {
 var canvas;
 var context;
 var aliens = [];
+var lasers = [];
 var ship = new Ship(canvas, 250, 400);
 
 var alienX = 50;
@@ -221,7 +244,8 @@ window.onload = function() {
 
   document.onkeydown = checkNewGame;
 
-
+  window.setInterval("drawLasers()", 50);
+  window.setInterval("moveLasers()", 50);
     
 }
 
@@ -230,9 +254,8 @@ window.addEventListener("keydown", function keydown(e) {
     //  Supress further processing of left/right/space (37/29/32)
     if(keycode == 37 || keycode == 39 || keycode == 32) {
         e.preventDefault();
-        moveShip(ship, keycode);
+        shipAction(ship, keycode);
     }
-    
 });
 // --------------------------------------------------
 // --------------------------------------------------
@@ -244,6 +267,13 @@ window.addEventListener("keydown", function keydown(e) {
 function drawAliens(){
   for(var i=0; i<aliens.length; i++){
     aliens[i].draw();
+  }
+}
+
+//Draws laser objects inside laser array
+function drawLasers(){
+  for(var i=0; i<lasers.length; i++){
+    lasers[i].draw();
   }
 }
 
