@@ -82,7 +82,7 @@ PlayState.prototype.draw = function(){
 }
 
 function fireLaser (){
-  lasers.push(new Laser(ship.x, ship.y - 10, 5 /*speed*/));
+  lasers.push(new Laser(canvas, ship.x, ship.y - 10, 5 /*speed*/));
 }
 
 function Ship(canvas, x, y){
@@ -147,9 +147,16 @@ function shipAction(ship, actionKey){
   }
 
   
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  ship.draw();
+  //context.clearRect(0, 0, canvas.width, canvas.height);
+  //ship.draw();
+  //drawAliens();
+}
+
+function drawEverything(){
+  //context.clearRect(0, 0, canvas.width, canvas.height);
   drawAliens();
+  ship.draw();
+  drawLasers();
 }
 
 function Laser(canvas, x, y, speed){
@@ -160,12 +167,18 @@ function Laser(canvas, x, y, speed){
 }
 
 Laser.prototype.draw = function (){
+    // if(this != null){
+    //   //then draw
+    // }
 
-  // Draw the square.
+    // else{
+    //   //null so don't draw?
+    // }
+  // Draw the laser
     context.beginPath();
-    context.strokeStyle = "red";
-    context.fillStyle = "red";
-    context.rect(this.x, this.y, 10, 10);
+    context.strokeStyle = "green";
+    context.fillStyle = "green";
+    context.rect(this.x, this.y, 5, 10);
 
     // Draw the outline.
     context.fill();
@@ -176,7 +189,12 @@ Laser.prototype.draw = function (){
 function moveLasers(){
 
   for(var i=0; i<lasers.length; i++){
-      lasers[i].y -= 10;
+      //if off the map, then set that laser to null to get rid of it?
+      if (lasers[i].y > 0){
+        lasers[i].y -= 10;
+      }
+      //console.log(lasers[i].x);
+      //console.log(lasers[i].y);
   }
 
 }
@@ -215,13 +233,6 @@ Alien.prototype.draw = function () {
 }
 
 
-
-// --------------------------------------------------
-// --------------------------------------------------
-//  onLoad calls
-// --------------------------------------------------
-// --------------------------------------------------
-
 var canvas;
 var context;
 var aliens = [];
@@ -232,8 +243,6 @@ var alienX = 50;
 var alienY = 50;
 
 
-// var shipx = Ship.prototype.getX();
-// var shipy = Ship.prototype.getY();
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
@@ -244,8 +253,7 @@ window.onload = function() {
 
   document.onkeydown = checkNewGame;
 
-  window.setInterval("drawLasers()", 50);
-  window.setInterval("moveLasers()", 50);
+  
     
 }
 
@@ -256,6 +264,9 @@ window.addEventListener("keydown", function keydown(e) {
         e.preventDefault();
         shipAction(ship, keycode);
     }
+    //drawLasers();
+    window.setInterval("drawEverything()", 50);
+    window.setInterval("moveLasers()", 100);
 });
 // --------------------------------------------------
 // --------------------------------------------------
@@ -272,6 +283,7 @@ function drawAliens(){
 
 //Draws laser objects inside laser array
 function drawLasers(){
+  context.clearRect(0, 0, canvas.width, canvas.height);
   for(var i=0; i<lasers.length; i++){
     lasers[i].draw();
   }
