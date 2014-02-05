@@ -153,7 +153,7 @@ function shipAction(ship, actionKey){
 }
 
 function drawEverything(){
-  //context.clearRect(0, 0, canvas.width, canvas.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
   drawAliens();
   ship.draw();
   drawLasers();
@@ -190,7 +190,7 @@ function moveLasers(){
 
   for(var i=0; i<lasers.length; i++){
       //if off the map, then set that laser to null to get rid of it?
-      if (lasers[i].y > 0){
+      if (lasers[i].y > -11){
         lasers[i].y -= 10;
       }
       //console.log(lasers[i].x);
@@ -232,11 +232,37 @@ Alien.prototype.draw = function () {
     context.stroke();   
 }
 
+function shiftDown(){
+  for (var i = 0; i >= aliens.length; i++) {
+    aliens[i].y += 10;
+  }
+}
+
+function moveAliensR(){
+    for(var i=0; i<aliens.length; i++){
+        aliens[i].x += 10;
+        if (aliens[aliens.length] = canvas.width - 10){
+          shiftDown();
+          moveAliensL();
+        }
+    }
+}
+
+function moveAliensL(){
+    for(var i=0; i<aliens.length; i++){
+        aliens[i].x -= 10;
+        if (aliens[0] = 0){
+          shiftDown();
+          moveAliensL();
+        }
+    }
+}
 
 var canvas;
 var context;
 var aliens = [];
 var lasers = [];
+var started = false;
 var ship = new Ship(canvas, 250, 400);
 
 var alienX = 50;
@@ -251,10 +277,7 @@ window.onload = function() {
   var welcomeState = new WelcomeState(canvas);
   welcomeState.draw();
 
-  document.onkeydown = checkNewGame;
-
-  
-    
+  document.onkeydown = checkNewGame;  
 }
 
 window.addEventListener("keydown", function keydown(e) {
@@ -283,7 +306,6 @@ function drawAliens(){
 
 //Draws laser objects inside laser array
 function drawLasers(){
-  context.clearRect(0, 0, canvas.width, canvas.height);
   for(var i=0; i<lasers.length; i++){
     lasers[i].draw();
   }
@@ -293,7 +315,8 @@ function checkNewGame(e) {
     var event = window.event ? window.event : e;
     canvas = document.getElementById("myCanvas");
 
-    if (event.keyCode == 13) {
+    if (event.keyCode == 13 && !started) {
+        started = true;
         var ps = new PlayState(canvas, 1, 3);
         ps.draw(canvas);
     }
