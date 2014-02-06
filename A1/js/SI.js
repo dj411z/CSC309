@@ -24,7 +24,6 @@ function checkNewGame(e) {
     var event = window.event ? window.event : e;
 
     if (event.keyCode == 13) {
-        ps.draw();
         game = new Game();
         game.start();
     }
@@ -80,17 +79,17 @@ function Game() {
 function gameLoop(){
 	context = game.canvas.getContext("2d");
 
+  ps.init();
+  ps.draw(game);
 	ps.update(game);
-	ps.draw(game);
+	
 }
 
 Game.prototype.start = function(){
   	window.setInterval("gameLoop(game)", 20);
 }
 
-function WelcomeState(){
-
-}
+function WelcomeState(){};
 
 WelcomeState.prototype.draw = function(){
 
