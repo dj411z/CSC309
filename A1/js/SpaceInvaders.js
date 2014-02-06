@@ -81,8 +81,20 @@ PlayState.prototype.draw = function(){
   this.ship.draw();
 }
 
+PlayState.prototype.updateGame = function(){
+  //calls helpers to update game
+  moveLasers();
+}
+
 function fireLaser (){
-  lasers.push(new Laser(canvas, ship.x, ship.y - 10, 5 /*speed*/));
+  if (canFire == true){
+    lasers.push(new Laser(canvas, ship.x, ship.y - 10, 5 /*speed*/));
+    reloading();
+  }
+
+  else{
+    console.log("Wait for reload!");
+  }  
 }
 
 function Ship(canvas, x, y){
@@ -186,18 +198,33 @@ Laser.prototype.draw = function (){
 
 }
 
+var canFire = true;
+
+function reloading(){
+  canFire = false;
+  window.setTimeout("reloaded()", 500);
+}
+
+function reloaded(){
+  canFire = true;  
+}
+
+
+
 function moveLasers(){
 
   for(var i=0; i<lasers.length; i++){
       //if off the map, then set that laser to null to get rid of it?
-      if (lasers[i].y > -11){
-        lasers[i].y -= 10;
+      lasers[i].y -= 10;
+      if (lasers[i].y < 0){
+        lasers.splice(i--, 1);
       }
-      //console.log(lasers[i].x);
-      //console.log(lasers[i].y);
+      
   }
 
 }
+
+
 // This function stores the details for a single alien
 function Alien(canvas, x, y){
   //this.context = canvas.getContext("2d");
@@ -258,6 +285,8 @@ function moveAliensL(){
     }
 }
 
+
+
 var canvas;
 var context;
 var aliens = [];
@@ -268,7 +297,33 @@ var ship = new Ship(canvas, 250, 400);
 var alienX = 50;
 var alienY = 50;
 
+function testHit(){
+  for (var i = 0; i < lasers.length; i++){
+    var l = lasers[i];
+    for (var j = 0; j < aliens.length; j++){
+      var a = aliens[j];
+      var alienxmax = a.x + 20;
 
+      if (l.x >= a.x /*&& l.x <= alienxmax*/&& l.y = a.y){
+        console.log("hit!");
+      }
+    }
+  }
+}
+
+function testCollision(){
+  for (var i = 0; i < aliens.length; i++){
+      var a = aliens[i];
+      var alienxmax = a.x + 20;
+      //do math to calculate ship's max x too
+      if(a.x <= ship.x && ship.x <= alienxmax){
+        //go to gameover state
+        var gs = new GameoverState(canvas);
+        gs.draw();
+      }
+  }
+
+}
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
@@ -290,6 +345,7 @@ window.addEventListener("keydown", function keydown(e) {
     //drawLasers();
     window.setInterval("drawEverything()", 50);
     window.setInterval("moveLasers()", 100);
+    //window.setInterval("testHit()", 100);
 });
 // --------------------------------------------------
 // --------------------------------------------------
