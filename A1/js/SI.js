@@ -118,10 +118,10 @@ PlayState.prototype.init = function(){
 PlayState.prototype.update = function(){
 	//move ship
 	moveLasers();
-	moveAliens();
+	moveAliensR();
 
 	testHit();
-	//testCollision();
+	testCollision();
 
 	//check for game lives = 0, then gameOver
 
@@ -161,7 +161,7 @@ function testHit(){
 function testCollision(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
-    
+
     if ((a.x + 10) > (ship.x - 10) && (a.x - 10) < (ship.x + 10)
         && (a.y + 10) > (ship.y - 10) && (a.y - 10) < (ship.y + 10))
       gs.draw();
@@ -199,13 +199,16 @@ function initAliens(){
     }
 }
 
-function moveAliens(){
-	//give each alien in the array a destination to move to
-	//once it hits that destination, give new destination
+// function moveAliens(){
+// 	//give each alien in the array a destination to move to
+// 	//once it hits that destination, give new destination
 
+//   for (int i = 0; i < aliens.length; i++){
+
+//   }
 
 	//if hits bottom, gameover
-}
+//}
 
 function Ship(x, y) {
     this.x = x;
@@ -314,4 +317,32 @@ GameoverState.prototype.draw = function(){
   context.font = "bold 40px Arial";
   context.fillText("Game over!", 200, 250);
     
+}
+
+function shiftDown(){
+  for (var i = 0; i >= aliens.length; i++) {
+    aliens[i].y += 10;
+  }
+}
+
+function moveAliensR(){
+    for(var i=0; i<aliens.length; i++){
+        aliens[i].x += 10;
+
+        var shift = false;  
+        if (aliens[aliens.length - 1].x >= canvas.width - 10){
+          shiftDown();
+          moveAliensL();
+        }
+    }
+}
+
+function moveAliensL(){
+    for(var i=0; i<aliens.length; i++){
+        aliens[i].x -= 10;
+        if (aliens[0].x <= 0){
+          shiftDown();
+          moveAliensL();
+        }
+    }
 }
