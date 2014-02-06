@@ -77,8 +77,8 @@ function PlayState(canvas, level, lives){
 PlayState.prototype.draw = function(){
   context.clearRect(0, 0, canvas.width, canvas.height);
   initAliens();
-  drawAliens();
-  this.ship.draw();
+  // drawAliens();
+  // this.ship.draw();
 }
 
 PlayState.prototype.updateGame = function(){
@@ -343,7 +343,7 @@ window.addEventListener("keydown", function keydown(e) {
         shipAction(ship, keycode);
     }
     //drawLasers();
-    window.setInterval("drawEverything()", 50);
+    window.setInterval("drawEverything()", 20);
     window.setInterval("moveLasers()", 100);
     //window.setInterval("testHit()", 100);
 });
