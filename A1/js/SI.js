@@ -78,14 +78,14 @@ function Game() {
 
 function gameLoop(){
 	context = game.canvas.getContext("2d");
-
-  ps.init();
+  console.log("loop");
   ps.draw(game);
 	ps.update(game);
 	
 }
 
 Game.prototype.start = function(){
+    ps.init();
   	window.setInterval("gameLoop(game)", 20);
 }
 
@@ -110,6 +110,7 @@ function PlayState(){
 }
 
 PlayState.prototype.init = function(){
+  console.log("in init");
 	ship = new Ship(250, 400);
 	initAliens();
 }
@@ -120,7 +121,7 @@ PlayState.prototype.update = function(){
 	moveAliens();
 
 	testHit();
-	testCollision();
+	//testCollision();
 
 	//check for game lives = 0, then gameOver
 
@@ -135,10 +136,37 @@ PlayState.prototype.draw = function(){
 }
 
 function testHit(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+    var hitAlien = false;
 
+    for (var j = 0; j < lasers.length; j++){
+      var l = lasers[j];
+
+      if (l.x >= (a.x - 10) && l.x <= (a.x + 10)
+          && l.y >= (a.y - 10) && l.y <= (a.y + 10)){
+        lasers.splice(j--, 1);
+        //add score
+        hitAlien = true;
+        break;
+      }
+    }
+
+    if (hitAlien){
+      aliens.splice(i--, 1);
+    }
+  }
 }
 
 function testCollision(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+    
+    if ((a.x + 10) > (ship.x - 10) && (a.x - 10) < (ship.x + 10)
+        && (a.y + 10) > (ship.y - 10) && (a.y - 10) < (ship.y + 10))
+      gs.draw();
+      //lives = 0;
+  }
 
 }
 
@@ -159,7 +187,7 @@ function initAliens(){
 	var alienX = 50;
 	var alienY = 50;
     for (var i = 0; i <= 29; i++){
-      var alien = new Alien(canvas, alienX, alienY);
+      var alien = new Alien(alienX, alienY);
       aliens.push(alien);
       if (alienX == 400){
         alienX = 50;
@@ -221,7 +249,7 @@ Laser.prototype.draw = function (){
 
 function fireLaser (){
   if (canFire == true){
-    lasers.push(new Laser(canvas, ship.x, ship.y - 10, 5 /*speed*/));
+    lasers.push(new Laser(ship.x, ship.y - 10, 5 /*speed*/));
     reloading();
   }
 
@@ -232,7 +260,7 @@ function fireLaser (){
 
 function reloading(){
   canFire = false;
-  window.setTimeout("reloaded()", 500);
+  window.setTimeout("reloaded()", 250);
 }
 
 function reloaded(){
@@ -263,6 +291,7 @@ Alien.prototype.draw = function () {
 
 //Draws alien objects inside aliens array
 function drawAliens(){
+  console.log("drawing aliens");
   for(var i=0; i<aliens.length; i++){
     aliens[i].draw();
   }
