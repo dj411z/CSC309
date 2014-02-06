@@ -2,14 +2,15 @@ var canvas;
 var context;
 var ws = new WelcomeState();
 var ps = new PlayState();
-var gos = new GameoverState();
+var gs = new GameoverState();
 var game;
 var level;
 var aliens = [];
 var lasers = [];
 var ship;
 var canFire = true;
-
+var hitLeft = true, hitRight = false, hitBottom = false;
+var gameLoopInterval;
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
@@ -50,7 +51,6 @@ function shipAction(actionKey){
   }
 
   if(actionKey == 32){
-    console.log("fire");
     fireLaser();
   }
 
@@ -78,7 +78,6 @@ function Game() {
 
 function gameLoop(){
 	context = game.canvas.getContext("2d");
-  console.log("loop");
   ps.draw(game);
 	ps.update(game);
 	
@@ -86,7 +85,7 @@ function gameLoop(){
 
 Game.prototype.start = function(){
     ps.init();
-  	window.setInterval("gameLoop(game)", 20);
+  	gameLoopInterval = window.setInterval("gameLoop(game)", 20);
 }
 
 function WelcomeState(){};
@@ -105,12 +104,12 @@ WelcomeState.prototype.draw = function(){
 
 function PlayState(){
 	this.aliensCurrentVelocity = 10;
-	this.aliensCurrentDroppingDistance = 0;
+  this.aliensNextVelocity = null;
 	this.aliensAreDropping = false;
+
 }
 
 PlayState.prototype.init = function(){
-  console.log("in init");
 	ship = new Ship(250, 400);
 	initAliens();
 }
@@ -118,7 +117,7 @@ PlayState.prototype.init = function(){
 PlayState.prototype.update = function(){
 	//move ship
 	moveLasers();
-	moveAliensR();
+	moveAliens();
 
 	testHit();
 	testCollision();
@@ -199,16 +198,70 @@ function initAliens(){
     }
 }
 
-// function moveAliens(){
-// 	//give each alien in the array a destination to move to
-// 	//once it hits that destination, give new destination
+function moveAliens(){
+  //  Move the invaders.
 
-//   for (int i = 0; i < aliens.length; i++){
+    for(i=0; i<aliens.length; i++) {
+        var a = aliens[i]; 
 
-//   }
+        if(hitLeft === false && a.x < 0) {
+            hitLeft = true;
+            shiftDown();
+            hitRight = false;
+        }
+        else if(hitRight === false && (a.x + 20)> canvas.width) {
+            hitRight = true;
+            shiftDown();
+            hitLeft = false;
+        }
+        else if(hitBottom === false && a.y > 400) {
+            hitBottom = true;
+        }
+    }
 
-	//if hits bottom, gameover
-//}
+    //  If we've hit the left, move down then right.
+    if(hitLeft) {
+       shiftRight();
+       hitRight = false;
+    }
+    //  If we've hit the right, move down then left.
+    if(hitRight) {
+        shiftLeft();
+        hitLeft = false;
+    }
+    //  If we've hit the bottom, it's game over.
+    if(hitBottom) {
+        gs.draw();
+    } 
+ }
+
+function shiftRight(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    a.x += 1;
+
+  }
+
+}
+
+function shiftLeft(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    a.x -= 1;
+  }
+
+}
+
+function shiftDown(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    a.y += 20;
+  }
+
+}
 
 function Ship(x, y) {
     this.x = x;
@@ -294,7 +347,6 @@ Alien.prototype.draw = function () {
 
 //Draws alien objects inside aliens array
 function drawAliens(){
-  console.log("drawing aliens");
   for(var i=0; i<aliens.length; i++){
     aliens[i].draw();
   }
@@ -311,38 +363,15 @@ function GameoverState(){
 }
 
 GameoverState.prototype.draw = function(){
+  aliens = [];
+  lasers = [];
+  ship = null;
+  window.clearInterval(gameLoopInterval);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = "blue";
   context.font = "bold 40px Arial";
   context.fillText("Game over!", 200, 250);
-    
-}
-
-function shiftDown(){
-  for (var i = 0; i >= aliens.length; i++) {
-    aliens[i].y += 10;
-  }
-}
-
-function moveAliensR(){
-    for(var i=0; i<aliens.length; i++){
-        aliens[i].x += 10;
-
-        var shift = false;  
-        if (aliens[aliens.length - 1].x >= canvas.width - 10){
-          shiftDown();
-          moveAliensL();
-        }
-    }
-}
-
-function moveAliensL(){
-    for(var i=0; i<aliens.length; i++){
-        aliens[i].x -= 10;
-        if (aliens[0].x <= 0){
-          shiftDown();
-          moveAliensL();
-        }
-    }
+  //display score and level
+  window.setTimeout("location.reload()", 5000);
 }
