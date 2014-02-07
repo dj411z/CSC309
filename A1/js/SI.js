@@ -11,6 +11,11 @@ var ship;
 var canFire = true;
 var hitLeft = true, hitRight = false, hitBottom = false;
 var gameLoopInterval;
+var currscore = 0;
+var level = 1;
+var numAl = 29;
+var shiftAm = 1;
+var points = 50;
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
@@ -71,6 +76,7 @@ function Game() {
   //width and height
   this.width = 500;
   this.height = 500;
+  this.numAliens = numAl;
 
   //game canvas to render to
   this.canvas = canvas;
@@ -153,6 +159,14 @@ function testHit(){
 
     if (hitAlien){
       aliens.splice(i--, 1);
+      currscore += points;
+      updateScore();
+      if (aliens.length == 0){
+        window.clearInterval(gameLoopInterval);
+        levelUp();
+        game = new Game();
+        game.start();
+      }
     }
   }
 }
@@ -185,7 +199,7 @@ function initAliens(){
 	// change up for each level
 	var alienX = 50;
 	var alienY = 50;
-    for (var i = 0; i <= 29; i++){
+    for (var i = 0; i <= game.numAliens; i++){
       var alien = new Alien(alienX, alienY);
       aliens.push(alien);
       if (alienX == 400){
@@ -239,7 +253,7 @@ function shiftRight(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
 
-    a.x += 1;
+    a.x += shiftAm;
 
   }
 
@@ -249,7 +263,7 @@ function shiftLeft(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
 
-    a.x -= 1;
+    a.x -= shiftAm;
   }
 
 }
@@ -258,7 +272,7 @@ function shiftDown(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
 
-    a.y += 20;
+    a.y += shiftAm;
   }
 
 }
@@ -308,10 +322,6 @@ function fireLaser (){
     lasers.push(new Laser(ship.x, ship.y - 10, 5 /*speed*/));
     reloading();
   }
-
-  else{
-    console.log("Wait for reload!");
-  }  
 }
 
 function reloading(){
@@ -372,6 +382,26 @@ GameoverState.prototype.draw = function(){
   context.fillStyle = "blue";
   context.font = "bold 40px Arial";
   context.fillText("Game over!", 200, 250);
+  context.fillText("Score: " + currscore , 200, 350);
+  context.fillText("Level: " + level , 200, 450);
   //display score and level
   window.setTimeout("location.reload()", 5000);
 }
+
+function updateScore() {
+
+  var score = document.getElementById("currscore");
+  score.innerHTML = currscore;
+
+}
+
+function levelUp() {
+
+  level += 1;
+  numAl += 15;
+  shiftAm += 1;
+  points += 10
+  var lev = document.getElementById("level");
+  lev.innerHTML = level;
+
+};
