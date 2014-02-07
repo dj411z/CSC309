@@ -381,9 +381,9 @@ GameoverState.prototype.draw = function(){
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = "blue";
   context.font = "bold 40px Arial";
-  context.fillText("Game over!", 200, 150);
-  context.fillText("Score: " + currscore , 200, 250);
-  context.fillText("Level: " + level , 200, 350);
+  context.fillText("Game over!", 200, 100);
+  context.fillText("Score: " + currscore , 200, 150);
+  context.fillText("Level: " + level , 200, 250);
   //display score and level
   window.setTimeout("location.reload()", 5000);
 }
