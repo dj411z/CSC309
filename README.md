@@ -4,6 +4,9 @@ Global Variables:
 
 
 Classes:
-
+  - Ship
+  - Laser
+  - Bomb
+  - Alein
 
 Methods:
