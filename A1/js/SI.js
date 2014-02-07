@@ -132,11 +132,9 @@ PlayState.prototype.update = function(){
 	moveAliens();
   moveBombs();
 
-	testHit();
+	testLaserHit();
 	testCollision();
   testBombHit();
-
-	//check for game lives = 0, then gameOver
 
 }
 
@@ -149,7 +147,7 @@ PlayState.prototype.draw = function(){
   drawBombs();
 }
 
-function testHit(){
+function testLaserHit(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
     var hitAlien = false;
@@ -157,8 +155,8 @@ function testHit(){
     for (var j = 0; j < lasers.length; j++){
       var l = lasers[j];
 
-      if (l.x >= (a.x - 10) && l.x <= (a.x + 10)
-          && l.y >= (a.y - 10) && l.y <= (a.y + 10)){
+      if (l.x >= (a.x - 10) && l.x <= (a.x + 20)
+          && l.y >= (a.y - 20) && l.y <= (a.y + 20)){
         lasers.splice(j--, 1);
         //add score
         hitAlien = true;
