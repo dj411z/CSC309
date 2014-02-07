@@ -3,14 +3,14 @@ h2 {
 	font-size: 20px;
 }
 
-#menu li {
+#directions li {
 	display: inline; 
 	margin-right: 1em; 
 	color: #FFFFFF;
 	font-size: 20px;
 	position: relative;
 	bottom: 50px;
-	left: 175px; 
+	left: 100px; 
 }
 #livesID {
 	position: relative;

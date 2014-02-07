@@ -14,7 +14,7 @@ var aliens = [], lasers = [], bombs = [], ship;
 var canFire = true;
 var hitLeft = true, hitRight = false, hitBottom = false;
 
-var started = false, gameLoopInterval;
+var started = false, paused = false, gameLoopInterval, dropBombsInterval;
 
 //Keep track of score and level
 var currscore = 0, level = 1;
@@ -39,20 +39,23 @@ function checkNewGame(e) {
     if (event.keyCode == 13 && !started) {
         started = true;
         game = new Game();
+        ps.init();
         game.start();
     }
 }
 
 window.addEventListener("keydown", function keydown(e) {
     var keycode = e.which || window.event.keycode;
-    //  Supress further processing of left/right/space
-    if(keycode == 37 || keycode == 39 || keycode == 32) {
-        e.preventDefault();
+    //  Supress further processing of all keys
+    e.preventDefault();
+    if((keycode == 37 || keycode == 39 || keycode == 32) && !paused) {
         shipAction(keycode);
     }
-    // Suppress up/down key presses to prevent scrolling in browser
-    else if (keycode == 38 || keycode == 40){
-      e.preventDefault();
+    
+    // p to pause game
+    else if (keycode == 80){
+      paused = !paused;
+      pauseGame();
     }
 });
 
@@ -89,9 +92,22 @@ function gameLoop(){
 }
 
 Game.prototype.start = function(){
-    ps.init();
   	gameLoopInterval = window.setInterval("gameLoop(game)", 20);
-    window.setInterval("dropBombs()", bombSpeed);
+    dropBombsInterval = window.setInterval("dropBombs()", bombSpeed);
+}
+
+function pauseGame(){
+  if (paused && (ship != null)){
+    window.clearInterval(gameLoopInterval);
+    window.clearInterval(dropBombsInterval);
+    context.fillStyle = "orange";
+    context.font = "bold 40pt Arial";
+    context.fillText("Paused!", 150, 200);
+  }
+
+  else if (!paused && (ship != null)){
+    game.start();
+  }
 }
 
 function WelcomeState(){};
@@ -157,6 +173,7 @@ function testLaserHit(){
         window.clearInterval(gameLoopInterval);
         levelUp();
         game = new Game();
+        ps.init();
         game.start();
       }
     }
@@ -350,7 +367,7 @@ Laser.prototype.draw = function (){
 
 function fireLaser (){
   if (canFire == true){
-    lasers.push(new Laser(ship.x, ship.y - 10));
+    lasers.push(new Laser(ship.x + (ship.width / 2), ship.y - 10));
     reloading();
   }
 }
@@ -408,7 +425,7 @@ function drawBombs(){
 function dropBombs(){
   var random = Math.floor(Math.random() * (aliens.length));
   var alien = aliens[random];
-  var bomb = new Bomb(alien.x, alien.y);
+  var bomb = new Bomb(alien.x + (alien.width / 2), alien.y + (alien.height));
   bombs.push(bomb);
 }
 
