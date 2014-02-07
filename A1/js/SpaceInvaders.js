@@ -1,9 +1,80 @@
-// --------------------------------------------------
-// --------------------------------------------------
-//  Classes 
-// --------------------------------------------------
-// --------------------------------------------------
+var canvas;
+var context;
+var ws = new WelcomeState();
+var ps = new PlayState();
+var gs = new GameoverState();
+var game;
+var level;
+var aliens = [];
+var lasers = [];
+var bombs = [];
+var ship;
+var canFire = true;
+var hitLeft = true, hitRight = false, hitBottom = false;
+var gameLoopInterval;
+var currscore = 0;
+var level = 1;
+var numAl = 29;
+var shiftAm = 1;
+var points = 50;
+var bombSpeed = 1000;
+var lives = 3;
+var started = false;
 
+window.onload = function() {
+  canvas = document.getElementById("myCanvas");
+  context = canvas.getContext("2d");
+  
+  ws.draw();
+
+  document.onkeydown = checkNewGame;  
+}
+
+function checkNewGame(e) {
+    var event = window.event ? window.event : e;
+
+    if (event.keyCode == 13 && !started) {
+        started = true;
+        game = new Game();
+        game.start();
+    }
+}
+
+window.addEventListener("keydown", function keydown(e) {
+    var keycode = e.which || window.event.keycode;
+    //  Supress further processing of left/right/space (37/29/32)
+    if(keycode == 37 || keycode == 39 || keycode == 32) {
+        e.preventDefault();
+        shipAction(keycode);
+    }
+    else if (keycode == 38 || keycode == 40){
+      e.preventDefault();
+    }
+});
+
+function shipAction(actionKey){
+
+  //move left
+  if(actionKey == 37){
+    ship.x -= 10;
+  }
+  //move right
+  if(actionKey == 39){
+    ship.x += 10;
+  }
+
+  if(actionKey == 32){
+    fireLaser();
+  }
+
+  //keep ship in game bounds
+  if(ship.x < 0) {
+      ship.x = 0;
+  }
+  if(ship.x >= canvas.width - 20) {
+      ship.x = canvas.width - 20;
+  }
+}
 
 //Game class
 function Game() {
@@ -11,32 +82,28 @@ function Game() {
   this.lives = 3;
 
   //width and height
-  this.width = 0;
-  this.height = 0;
-
-  //keep track of area for game
-  this.gameScreen = {left: 0, right: 0, top: 0, bottom: 0};
+  this.width = 500;
+  this.height = 500;
+  this.numAliens = numAl;
 
   //game canvas to render to
-  this.gameCanvas = null;
+  this.canvas = canvas;
 }
 
-Game.prototype.initGame = function(gameCanvas){
-  this.gameCanvas = gameCanvas;
-  this.width = gameCanvas.width;
-  this.height = gameCanvas.height;
-
-  //set game bounds?
-
+function gameLoop(){
+	context = game.canvas.getContext("2d");
+  ps.draw(game);
+	ps.update(game);
+	
 }
 
-
-//initial welcome state
-
-function WelcomeState(canvas){
-  this.context = canvas.getContext("2d");
-  this.welcomemsg = "Welcome to Space Invaders";
+Game.prototype.start = function(){
+    ps.init();
+  	gameLoopInterval = window.setInterval("gameLoop(game)", 20);
+    window.setInterval("dropBombs()", bombSpeed);
 }
+
+function WelcomeState(){};
 
 WelcomeState.prototype.draw = function(){
 
@@ -50,61 +117,216 @@ WelcomeState.prototype.draw = function(){
     
 }
 
-function GameoverState(canvas){
-  this.context = canvas.getContext("2d");
-  this.gameovermsg = "Game over";
+function PlayState(){
+	this.aliensCurrentVelocity = 10;
+  this.aliensNextVelocity = null;
+	this.aliensAreDropping = false;
+
 }
 
-GameoverState.prototype.draw = function(){
-
-  this.context.clearRect(0, 0, canvas.width, canvas.height);
-  this.context.fillStyle = "blue";
-  this.context.font = "bold 40px Arial";
-  this.context.fillText("Game over!", 200, 250);
-    
+PlayState.prototype.init = function(){
+	ship = new Ship(250, 400);
+	initAliens();
 }
 
-function PlayState(canvas, level, lives){
-  this.context = canvas.getContext("2d");
-  this.level = level;
-  this.lives = lives;
+PlayState.prototype.update = function(){
+	//move ship
+	moveLasers();
+	moveAliens();
+  moveBombs();
 
-  this.ship = ship;
-  this.aliens = aliens;
-  this.lasers = lasers;
+	testLaserHit();
+	testCollision();
+  testBombHit();
+
 }
 
 PlayState.prototype.draw = function(){
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  initAliens();
-  // drawAliens();
-  // this.ship.draw();
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
+	ship.draw();
+	drawAliens();
+	drawLasers();
+  drawBombs();
 }
 
-PlayState.prototype.updateGame = function(){
-  //calls helpers to update game
-  moveLasers();
+function testLaserHit(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+    var hitAlien = false;
+
+    for (var j = 0; j < lasers.length; j++){
+      var l = lasers[j];
+
+      if (l.x >= (a.x - 10) && l.x <= (a.x + 20)
+          && l.y >= (a.y - 20) && l.y <= (a.y + 20)){
+        lasers.splice(j--, 1);
+        //add score
+        hitAlien = true;
+        break;
+      }
+    }
+
+    if (hitAlien){
+      aliens.splice(i--, 1);
+      currscore += points;
+      updateScore();
+      if (aliens.length == 0){
+        window.clearInterval(gameLoopInterval);
+        levelUp();
+        game = new Game();
+        game.start();
+      }
+    }
+  }
 }
 
-function fireLaser (){
-  if (canFire == true){
-    lasers.push(new Laser(canvas, ship.x, ship.y - 10, 5 /*speed*/));
-    reloading();
+function testBombHit(){
+  for (var i = 0; i < bombs.length; i++){
+    var b = bombs[i];
+    var hitShip = false;
+
+
+    if (b.x >= (ship.x - 10) && b.x <= (ship.x + 20) && b.y >= (ship.y - 20) 
+                                      && b.y <= (ship.y + 20)){
+
+        bombs.splice(i--, 1);
+        hitShip = true;
+    }
+    if (hitShip){
+      lives -= 1;
+      updateLives();
+      if (lives == 0){
+        gs.draw();
+      }
+    }
+  }
+}
+
+function testCollision(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    if ((a.x + 10) > (ship.x - 10) && (a.x - 10) < (ship.x + 10)
+        && (a.y + 10) > (ship.y - 10) && (a.y - 10) < (ship.y + 10))
+      gs.draw();
+      //lives = 0;
   }
 
-  else{
-    console.log("Wait for reload!");
-  }  
 }
 
-function Ship(canvas, x, y){
-  //this.context = canvas.getContext("2d");
-  this.x = x;
-  this.y = y;
+function moveLasers(){
+
+  for(var i=0; i<lasers.length; i++){
+      //if off the map, then set that laser to null to get rid of it?
+      lasers[i].y -= 10;
+      if (lasers[i].y < 0){
+        lasers.splice(i--, 1);
+      }
+  }
+
 }
 
-// Ship.prototype.getX = function(){return this.x};
-// Ship.prototype.getY = function(){return this.y};
+function moveBombs() {
+
+  for(var i=0; i<bombs.length; i++){
+      //if off the map, then set that laser to null to get rid of it?
+      bombs[i].y += 2;
+      if (bombs[i].y > 400){
+        bombs.splice(i--, 1);
+      }
+  }
+
+}
+
+function initAliens(){
+	// change up for each level
+	var alienX = 50;
+	var alienY = 50;
+    for (var i = 0; i <= game.numAliens; i++){
+      var alien = new Alien(alienX, alienY);
+      aliens.push(alien);
+      if (alienX == 400){
+        alienX = 50;
+        alienY = alienY + 25; 
+      }
+      else{
+        alienX += 25;
+      }
+    }
+}
+
+function moveAliens(){
+  //  Move the invaders.
+
+    for(i=0; i<aliens.length; i++) {
+        var a = aliens[i]; 
+
+        if(hitLeft === false && a.x < 0) {
+            hitLeft = true;
+            shiftDown();
+            hitRight = false;
+        }
+        else if(hitRight === false && (a.x + 20)> canvas.width) {
+            hitRight = true;
+            shiftDown();
+            hitLeft = false;
+        }
+        else if(hitBottom === false && a.y > 400) {
+            hitBottom = true;
+        }
+    }
+
+    //  If we've hit the left, move down then right.
+    if(hitLeft) {
+       shiftRight();
+       hitRight = false;
+    }
+    //  If we've hit the right, move down then left.
+    if(hitRight) {
+        shiftLeft();
+        hitLeft = false;
+    }
+    //  If we've hit the bottom, it's game over.
+    if(hitBottom) {
+        gs.draw();
+    } 
+ }
+
+function shiftRight(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    a.x += shiftAm;
+
+  }
+
+}
+
+function shiftLeft(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    a.x -= shiftAm;
+  }
+
+}
+
+function shiftDown(){
+  for (var i = 0; i < aliens.length; i++){
+    var a = aliens[i];
+
+    a.y += 10;
+  }
+
+}
+
+function Ship(x, y) {
+    this.x = x;
+    this.y = y;
+    this.width = 20;
+    this.height = 20;
+}
 
 Ship.prototype.draw = function(){
 
@@ -117,75 +339,35 @@ Ship.prototype.draw = function(){
     // Draw the outline.
     context.fill();
     context.stroke();   
-
-  // var ship_img = new Image();
-    
-  // ship_img.onload = function () {
-  //   //can just hardcode start for now
-  //   context.drawImage(ship_img, 250, 400);
-  // }
-  
-  // ship_img.src = "images/ship.bmp"; // get the image from this URL
 }
 
-function checkShipAction(e) {
-    var event = window.event ? window.event : e;
-    ship.shipaction(event.keyCode);
+function Bomb(x, y){
 
-}
-
-function shipAction(ship, actionKey){
-
-  //move left
-  if(actionKey == 37){
-    ship.x -= 10;
-  }
-  //move right
-  if(actionKey == 39){
-    ship.x += 10;
-  }
-
-  if(actionKey == 32){
-    console.log("fire");
-    fireLaser();
-  }
-
-  //keep ship in game bounds
-  if(ship.x < 0) {
-      ship.x = 0;
-  }
-  if(ship.x >= canvas.width - 20) {
-      ship.x = canvas.width - 20;
-  }
-
-  
-  //context.clearRect(0, 0, canvas.width, canvas.height);
-  //ship.draw();
-  //drawAliens();
-}
-
-function drawEverything(){
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  drawAliens();
-  ship.draw();
-  drawLasers();
-}
-
-function Laser(canvas, x, y, speed){
-  //this.context = canvas.getContext("2d");
   this.x = x;
   this.y = y;
-  this.speed = speed;
+}
+
+Bomb.prototype.draw = function() {
+  // Draw the bomb
+    context.beginPath();
+    context.strokeStyle = "yellow";
+    context.fillStyle = "yellow";
+    context.rect(this.x, this.y, 5, 5);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+
+}
+
+function Laser(x, y, velocity) {
+    this.x = x;
+    this.y = y;
+    this.velocity = velocity;
 }
 
 Laser.prototype.draw = function (){
-    // if(this != null){
-    //   //then draw
-    // }
 
-    // else{
-    //   //null so don't draw?
-    // }
   // Draw the laser
     context.beginPath();
     context.strokeStyle = "green";
@@ -198,54 +380,31 @@ Laser.prototype.draw = function (){
 
 }
 
-var canFire = true;
+function fireLaser (){
+  if (canFire == true){
+    lasers.push(new Laser(ship.x, ship.y - 10, 5 /*speed*/));
+    reloading();
+  }
+}
 
 function reloading(){
   canFire = false;
-  window.setTimeout("reloaded()", 500);
+  window.setTimeout("reloaded()", 250);
 }
 
 function reloaded(){
   canFire = true;  
 }
 
+ 
+function Alien(x, y) {
+    this.x = x;
+    this.y = y;
 
+    this.width = 18;
+    this.height = 14;
+} 
 
-function moveLasers(){
-
-  for(var i=0; i<lasers.length; i++){
-      //if off the map, then set that laser to null to get rid of it?
-      lasers[i].y -= 10;
-      if (lasers[i].y < 0){
-        lasers.splice(i--, 1);
-      }
-      
-  }
-
-}
-
-
-// This function stores the details for a single alien
-function Alien(canvas, x, y){
-  //this.context = canvas.getContext("2d");
-  this.x = x;
-  this.y = y;
-}
-
-function initAliens(){
-
-    for (var i = 0; i <= 29; i++){
-      var alien = new Alien(canvas, alienX, alienY);
-      aliens.push(alien);
-      if (alienX == 400){
-        alienX = 50;
-        alienY = alienY + 25; 
-      }
-      else{
-        alienX += 25;
-      }
-    }
-}
 Alien.prototype.draw = function () {
 
     // Draw the square.
@@ -258,100 +417,6 @@ Alien.prototype.draw = function () {
     context.fill();
     context.stroke();   
 }
-
-function shiftDown(){
-  for (var i = 0; i >= aliens.length; i++) {
-    aliens[i].y += 10;
-  }
-}
-
-function moveAliensR(){
-    for(var i=0; i<aliens.length; i++){
-        aliens[i].x += 10;
-        if (aliens[aliens.length] = canvas.width - 10){
-          shiftDown();
-          moveAliensL();
-        }
-    }
-}
-
-function moveAliensL(){
-    for(var i=0; i<aliens.length; i++){
-        aliens[i].x -= 10;
-        if (aliens[0] = 0){
-          shiftDown();
-          moveAliensL();
-        }
-    }
-}
-
-
-
-var canvas;
-var context;
-var aliens = [];
-var lasers = [];
-var started = false;
-var ship = new Ship(canvas, 250, 400);
-
-var alienX = 50;
-var alienY = 50;
-
-function testHit(){
-  for (var i = 0; i < lasers.length; i++){
-    var l = lasers[i];
-    for (var j = 0; j < aliens.length; j++){
-      var a = aliens[j];
-      var alienxmax = a.x + 20;
-
-      if (l.x >= a.x /*&& l.x <= alienxmax*/&& l.y = a.y){
-        console.log("hit!");
-      }
-    }
-  }
-}
-
-function testCollision(){
-  for (var i = 0; i < aliens.length; i++){
-      var a = aliens[i];
-      var alienxmax = a.x + 20;
-      //do math to calculate ship's max x too
-      if(a.x <= ship.x && ship.x <= alienxmax){
-        //go to gameover state
-        var gs = new GameoverState(canvas);
-        gs.draw();
-      }
-  }
-
-}
-
-window.onload = function() {
-  canvas = document.getElementById("myCanvas");
-  context = canvas.getContext("2d");
-  
-  var welcomeState = new WelcomeState(canvas);
-  welcomeState.draw();
-
-  document.onkeydown = checkNewGame;  
-}
-
-window.addEventListener("keydown", function keydown(e) {
-    var keycode = e.which || window.event.keycode;
-    //  Supress further processing of left/right/space (37/29/32)
-    if(keycode == 37 || keycode == 39 || keycode == 32) {
-        e.preventDefault();
-        shipAction(ship, keycode);
-    }
-    //drawLasers();
-    window.setInterval("drawEverything()", 20);
-    window.setInterval("moveLasers()", 100);
-    //window.setInterval("testHit()", 100);
-});
-// --------------------------------------------------
-// --------------------------------------------------
-// Helper Functions
-// --------------------------------------------------
-// --------------------------------------------------
 
 //Draws alien objects inside aliens array
 function drawAliens(){
@@ -367,13 +432,66 @@ function drawLasers(){
   }
 }
 
-function checkNewGame(e) {
-    var event = window.event ? window.event : e;
-    canvas = document.getElementById("myCanvas");
-
-    if (event.keyCode == 13 && !started) {
-        started = true;
-        var ps = new PlayState(canvas, 1, 3);
-        ps.draw(canvas);
-    }
+function drawBombs(){
+  for(var i=0; i<bombs.length; i++){
+    bombs[i].draw();
+  }
 }
+
+function dropBombs(){
+  var random = Math.floor(Math.random() * (aliens.length));
+  var alien = aliens[random];
+  var bomb = new Bomb(alien.x, alien.y);
+  bombs.push(bomb);
+}
+
+function GameoverState(){
+}
+
+GameoverState.prototype.draw = function(){
+  aliens = [];
+  lasers = [];
+  ship = null;
+  window.clearInterval(gameLoopInterval);
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  context.fillStyle = "orange";
+  context.font = "bold 40pt Arial";
+  context.fillText("Game over!", 150, 100);
+
+  context.fillStyle = "yellow";
+  context.font = "bold 16pt Arial";
+  context.fillText("Your Score: " + currscore , 200, 200);
+  context.fillText("Level: " + level , 200, 250);
+  
+  window.setTimeout("location.reload()", 5000);
+}
+
+function updateScore() {
+
+  var score = document.getElementById("currscore");
+  score.innerHTML = "Current Score: " + currscore;
+
+}
+
+function updateLives(){
+
+  var displayLives = document.getElementById("lives");
+  displayLives.innerHTML = "Lives: " + lives;
+
+}
+
+function levelUp() {
+
+  level += 1;
+  bombSpeed -= 100;
+  numAl += 15;
+  shiftAm += 1;
+  points += 10
+  var lev = document.getElementById("level");
+  lev.innerHTML = "Level: " + level;
+
+};
+
+
