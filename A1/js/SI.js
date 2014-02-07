@@ -439,7 +439,7 @@ function drawBombs(){
 }
 
 function dropBombs(){
-  var random = Math.floor(Math.random() * (aliens.length - 1)) + 1;
+  var random = Math.floor(Math.random() * (aliens.length - 1));
   var alien = aliens[random];
   var bomb = new Bomb(alien.x, alien.y);
   bombs.push(bomb);
