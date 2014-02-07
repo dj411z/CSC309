@@ -1,4 +1,177 @@
+//Game class
+function Game() {};
+
+//Main method to update and draw game 
+function gameLoop(){
+  ps.draw(game);
+  ps.update(game);
+}
+
+//Sets intervals for main game lopp and the bomb dropping
+Game.prototype.start = function(){
+    gameLoopInterval = window.setInterval("gameLoop(game)", 20);
+    dropBombsInterval = window.setInterval("dropBombs()", bombSpeed);
+}
+
+//Initial state of the game
+function WelcomeState(){};
+
+//Display welcome state image 
+WelcomeState.prototype.draw = function(){
+
+  var img = new Image();
+    
+  img.onload = function () {
+    context.drawImage(img, -50, -10);
+  }
+  // get the image from this URL
+  img.src = "images/start.jpg"; 
+}
+
+//Class to keep track of game play 
+function PlayState(){};
+
+//Initialize ship and populate aliens array 
+PlayState.prototype.init = function(){
+  ship = new Ship(canvas.width / 2, canvas.height - 100);
+  initAliens();
+}
+
+//Adjust movement of aliens, lasers, and bombs and test for object collisions  
+PlayState.prototype.update = function(){
+  moveLasers();
+  moveAliens();
+  moveBombs();
+
+  testLaserHit();
+  testCollision();
+  testBombHit();
+}
+
+//Update canvas with drawings of objects
+PlayState.prototype.draw = function(){
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  ship.draw();
+  drawAliens();
+  drawLasers();
+  drawBombs();
+}
+
+//Class to keep track of when game ends
+function GameoverState(){};
+
+//Draw game over prompts and clear all objects 
+GameoverState.prototype.draw = function(){
+  //clear objects, stop gameLoop
+  aliens = [];
+  lasers = [];
+  ship = null;
+  window.clearInterval(gameLoopInterval);
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  context.fillStyle = "orange";
+  context.font = "bold 40pt Arial";
+  context.fillText("Game over!", 150, 100);
+
+  context.fillStyle = "yellow";
+  context.font = "bold 16pt Arial";
+  context.fillText("Your Score: " + currscore , 200, 200);
+  context.fillText("Level: " + level , 200, 250);
+  
+  //refresh page in 5 seconds
+  window.setTimeout("location.reload()", 5000);
+}
+
+//Ship class
+function Ship(x, y) {
+    this.x = x;
+    this.y = y;
+    this.width = 20;
+    this.height = 20;
+}
+
+//Draw ship object 
+Ship.prototype.draw = function(){
+
+  // Draw the square.
+    context.beginPath();
+    context.strokeStyle = "blue";
+    context.fillStyle = "blue";
+    context.rect(this.x, this.y, this.width, this.height);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+}
+
+//Bomb class
+function Bomb(x, y){
+  this.x = x;
+  this.y = y;
+}
+
+//Draw bomb object
+Bomb.prototype.draw = function() {
+  // Draw the bomb
+    context.beginPath();
+    context.strokeStyle = "yellow";
+    context.fillStyle = "yellow";
+    context.rect(this.x, this.y, 5, 5);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+
+}
+
+//Laser class
+function Laser(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+//Draw laser object 
+Laser.prototype.draw = function (){
+
+  // Draw the laser
+    context.beginPath();
+    context.strokeStyle = "green";
+    context.fillStyle = "green";
+    context.rect(this.x, this.y, 5, 10);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+
+}
+
+//Alien class
+function Alien(x, y) {
+    this.x = x;
+    this.y = y;
+
+    this.width = 20;
+    this.height = 20;
+} 
+
+//Draw alien object
+Alien.prototype.draw = function () {
+
+    // Draw the square.
+    context.beginPath();
+    context.strokeStyle = "red";
+    context.fillStyle = "red";
+    context.rect(this.x, this.y, this.width, this.height);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+}
+
 //Global variables
+
 var canvas, context;
 
 //Initialize states of the game
@@ -86,20 +259,6 @@ function shipAction(actionKey){
   }
 }
 
-//Game class
-function Game() {};
-
-//Main method to update and draw game 
-function gameLoop(){
-  ps.draw(game);
-	ps.update(game);
-}
-
-//Sets intervals for main game lopp and the bomb dropping
-Game.prototype.start = function(){
-  	gameLoopInterval = window.setInterval("gameLoop(game)", 20);
-    dropBombsInterval = window.setInterval("dropBombs()", bombSpeed);
-}
 
 //Keep drawn canavs objects still while pausing game
 function pauseGame(){
@@ -116,50 +275,8 @@ function pauseGame(){
   }
 }
 
-//Initial state of the game
-function WelcomeState(){};
 
-//Display welcome state image 
-WelcomeState.prototype.draw = function(){
 
-  var img = new Image();
-    
-  img.onload = function () {
-    context.drawImage(img, -50, -10);
-  }
-  // get the image from this URL
-  img.src = "images/start.jpg"; 
-}
-
-//Class to keep track of game play 
-function PlayState(){};
-
-//Initialize ship and populate aliens array 
-PlayState.prototype.init = function(){
-	ship = new Ship(canvas.width / 2, canvas.height - 100);
-	initAliens();
-}
-
-//Adjust movement of aliens, lasers, and bombs and test for object collisions  
-PlayState.prototype.update = function(){
-	moveLasers();
-	moveAliens();
-  moveBombs();
-
-	testLaserHit();
-	testCollision();
-  testBombHit();
-}
-
-//Update canvas with drawings of objects
-PlayState.prototype.draw = function(){
-	context.clearRect(0, 0, canvas.width, canvas.height);
-
-	ship.draw();
-	drawAliens();
-	drawLasers();
-  drawBombs();
-}
 //Check for laser-alien collisions and remove them as nessecary 
 function testLaserHit(){
   for (var i = 0; i < aliens.length; i++){
@@ -234,29 +351,6 @@ function testCollision(){
 
 }
 
-//Modify coordinates of laser objects
-function moveLasers(){
-
-  for(var i=0; i<lasers.length; i++){
-      lasers[i].y -= 10;
-      //If off screen boundary, remove from array 
-      if (lasers[i].y < 0){
-        lasers.splice(i--, 1);
-      }
-  }
-}
-
-//Modify coordinates of bomb objects
-function moveBombs() {
-
-  for(var i=0; i<bombs.length; i++){
-      bombs[i].y += 2;
-      //If off screen boundary, remove from array
-      if (bombs[i].y > ((canvas.height - 100) + ship.height)){
-        bombs.splice(i--, 1);
-      }
-  }
-}
 
 //Populate aliens array
 function initAliens(){
@@ -315,7 +409,6 @@ function moveAliens(){
     } 
  }
 
-
 //Move alien group to right by configured shift amount speed
 function shiftRight(){
   for (var i = 0; i < aliens.length; i++){
@@ -340,67 +433,28 @@ function shiftDown(){
   }
 }
 
-//Ship class
-function Ship(x, y) {
-    this.x = x;
-    this.y = y;
-    this.width = 20;
-    this.height = 20;
+//Modify coordinates of laser objects
+function moveLasers(){
+
+  for(var i=0; i<lasers.length; i++){
+      lasers[i].y -= 10;
+      //If off screen boundary, remove from array 
+      if (lasers[i].y < 0){
+        lasers.splice(i--, 1);
+      }
+  }
 }
 
-//Draw ship object 
-Ship.prototype.draw = function(){
+//Modify coordinates of bomb objects
+function moveBombs() {
 
-  // Draw the square.
-    context.beginPath();
-    context.strokeStyle = "blue";
-    context.fillStyle = "blue";
-    context.rect(this.x, this.y, this.width, this.height);
-
-    // Draw the outline.
-    context.fill();
-    context.stroke();   
-}
-
-//Bomb class
-function Bomb(x, y){
-  this.x = x;
-  this.y = y;
-}
-
-//Draw bomb object
-Bomb.prototype.draw = function() {
-  // Draw the bomb
-    context.beginPath();
-    context.strokeStyle = "yellow";
-    context.fillStyle = "yellow";
-    context.rect(this.x, this.y, 5, 5);
-
-    // Draw the outline.
-    context.fill();
-    context.stroke();   
-
-}
-
-//Laser class
-function Laser(x, y) {
-    this.x = x;
-    this.y = y;
-}
-
-//Draw laser object 
-Laser.prototype.draw = function (){
-
-  // Draw the laser
-    context.beginPath();
-    context.strokeStyle = "green";
-    context.fillStyle = "green";
-    context.rect(this.x, this.y, 5, 10);
-
-    // Draw the outline.
-    context.fill();
-    context.stroke();   
-
+  for(var i=0; i<bombs.length; i++){
+      bombs[i].y += 2;
+      //If off screen boundary, remove from array
+      if (bombs[i].y > ((canvas.height - 100) + ship.height)){
+        bombs.splice(i--, 1);
+      }
+  }
 }
 
 //Populate laser array according to established fire rate
@@ -423,27 +477,12 @@ function reloaded(){
   canFire = true;  
 }
 
-//Alien class
-function Alien(x, y) {
-    this.x = x;
-    this.y = y;
-
-    this.width = 20;
-    this.height = 20;
-} 
-
-//Draw alien object
-Alien.prototype.draw = function () {
-
-    // Draw the square.
-    context.beginPath();
-    context.strokeStyle = "red";
-    context.fillStyle = "red";
-    context.rect(this.x, this.y, this.width, this.height);
-
-    // Draw the outline.
-    context.fill();
-    context.stroke();   
+//Select random alien to drop bomb
+function dropBombs(){
+  var random = Math.floor(Math.random() * (aliens.length));
+  var alien = aliens[random];
+  var bomb = new Bomb(alien.x + (alien.width / 2), alien.y + (alien.height));
+  bombs.push(bomb);
 }
 
 //Draws alien objects from aliens array
@@ -467,39 +506,6 @@ function drawBombs(){
   }
 }
 
-//Select random alien to drop bomb
-function dropBombs(){
-  var random = Math.floor(Math.random() * (aliens.length));
-  var alien = aliens[random];
-  var bomb = new Bomb(alien.x + (alien.width / 2), alien.y + (alien.height));
-  bombs.push(bomb);
-}
-
-//Class to keep track of when game ends
-function GameoverState(){};
-
-//Draw game over prompts and clear all objects 
-GameoverState.prototype.draw = function(){
-  //clear objects, stop gameLoop
-  aliens = [];
-  lasers = [];
-  ship = null;
-  window.clearInterval(gameLoopInterval);
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
-  context.fillStyle = "orange";
-  context.font = "bold 40pt Arial";
-  context.fillText("Game over!", 150, 100);
-
-  context.fillStyle = "yellow";
-  context.font = "bold 16pt Arial";
-  context.fillText("Your Score: " + currscore , 200, 200);
-  context.fillText("Level: " + level , 200, 250);
-  
-  //refresh page in 5 seconds
-  window.setTimeout("location.reload()", 5000);
-}
 
 //Change score in html doc 
 function updateScore() {
