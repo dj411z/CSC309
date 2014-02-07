@@ -7,6 +7,7 @@ var game;
 var level;
 var aliens = [];
 var lasers = [];
+var bombs = [];
 var ship;
 var canFire = true;
 var hitLeft = true, hitRight = false, hitBottom = false;
@@ -16,6 +17,9 @@ var level = 1;
 var numAl = 29;
 var shiftAm = 1;
 var points = 50;
+var bombSpeed = 1000;
+var lives = 3;
+var started = false;
 
 window.onload = function() {
   canvas = document.getElementById("myCanvas");
@@ -29,7 +33,8 @@ window.onload = function() {
 function checkNewGame(e) {
     var event = window.event ? window.event : e;
 
-    if (event.keyCode == 13) {
+    if (event.keyCode == 13 && !started) {
+        started = true;
         game = new Game();
         game.start();
     }
@@ -92,6 +97,7 @@ function gameLoop(){
 Game.prototype.start = function(){
     ps.init();
   	gameLoopInterval = window.setInterval("gameLoop(game)", 20);
+    window.setInterval("dropBombs()", bombSpeed);
 }
 
 function WelcomeState(){};
@@ -124,9 +130,11 @@ PlayState.prototype.update = function(){
 	//move ship
 	moveLasers();
 	moveAliens();
+  moveBombs();
 
 	testHit();
 	testCollision();
+  testBombHit();
 
 	//check for game lives = 0, then gameOver
 
@@ -138,6 +146,7 @@ PlayState.prototype.draw = function(){
 	ship.draw();
 	drawAliens();
 	drawLasers();
+  drawBombs();
 }
 
 function testHit(){
@@ -171,6 +180,28 @@ function testHit(){
   }
 }
 
+function testBombHit(){
+  for (var i = 0; i < bombs.length; i++){
+    var b = bombs[i];
+    var hitShip = false;
+
+
+    if (b.x >= (ship.x - 10) && b.x <= (ship.x + 20) && b.y >= (ship.y - 20) 
+                                      && b.y <= (ship.y + 20)){
+
+        bombs.splice(i--, 1);
+        hitShip = true;
+    }
+    if (hitShip){
+      lives -= 1;
+      updateLives();
+      if (lives == 0){
+        gs.draw();
+      }
+    }
+  }
+}
+
 function testCollision(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
@@ -190,6 +221,18 @@ function moveLasers(){
       lasers[i].y -= 10;
       if (lasers[i].y < 0){
         lasers.splice(i--, 1);
+      }
+  }
+
+}
+
+function moveBombs() {
+
+  for(var i=0; i<bombs.length; i++){
+      //if off the map, then set that laser to null to get rid of it?
+      bombs[i].y += 2;
+      if (bombs[i].y > 400){
+        bombs.splice(i--, 1);
       }
   }
 
@@ -281,7 +324,7 @@ function Ship(x, y) {
     this.x = x;
     this.y = y;
     this.width = 20;
-    this.height = 16;
+    this.height = 20;
 }
 
 Ship.prototype.draw = function(){
@@ -295,6 +338,25 @@ Ship.prototype.draw = function(){
     // Draw the outline.
     context.fill();
     context.stroke();   
+}
+
+function Bomb(x, y){
+
+  this.x = x;
+  this.y = y;
+}
+
+Bomb.prototype.draw = function() {
+  // Draw the bomb
+    context.beginPath();
+    context.strokeStyle = "yellow";
+    context.fillStyle = "yellow";
+    context.rect(this.x, this.y, 5, 5);
+
+    // Draw the outline.
+    context.fill();
+    context.stroke();   
+
 }
 
 function Laser(x, y, velocity) {
@@ -369,6 +431,19 @@ function drawLasers(){
   }
 }
 
+function drawBombs(){
+  for(var i=0; i<bombs.length; i++){
+    bombs[i].draw();
+  }
+}
+
+function dropBombs(){
+  var random = Math.floor(Math.random() * (aliens.length - 1)) + 1;
+  var alien = aliens[random];
+  var bomb = new Bomb(alien.x, alien.y);
+  bombs.push(bomb);
+}
+
 function GameoverState(){
 }
 
@@ -382,8 +457,8 @@ GameoverState.prototype.draw = function(){
   context.fillStyle = "blue";
   context.font = "bold 40px Arial";
   context.fillText("Game over!", 200, 100);
-  context.fillText("Score: " + currscore , 200, 150);
-  context.fillText("Level: " + level , 200, 250);
+  context.fillText("Score: " + currscore , 200, 200);
+  context.fillText("Level: " + level , 200, 300);
   //display score and level
   window.setTimeout("location.reload()", 5000);
 }
@@ -395,9 +470,17 @@ function updateScore() {
 
 }
 
+function updateLives(){
+
+  var displayLives = document.getElementById("lives");
+  displayLives.innerHTML = "Lives: " + lives;
+
+}
+
 function levelUp() {
 
   level += 1;
+  bombSpeed -= 100;
   numAl += 15;
   shiftAm += 1;
   points += 10
@@ -405,3 +488,5 @@ function levelUp() {
   lev.innerHTML = "Level: " + level;
 
 };
+
+

@@ -15,12 +15,18 @@ h2 {
 #lives1 {
 	position: relative;
 	top: 10px;
+	left: 620px; 
+
+}
+#level1 {
+	position: relative;
+	top: 50px;
 	left: 720px; 
 
 }
-#currscore1 {
+#currscore {
 	position: relative;
-	top: 50px;
+	top: 90px;
 	left: 300px; 
 }
 #canvas{
