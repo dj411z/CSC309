@@ -47,6 +47,9 @@ window.addEventListener("keydown", function keydown(e) {
         e.preventDefault();
         shipAction(keycode);
     }
+    else if (keycode == 38 || keycode == 40){
+      e.preventDefault();
+    }
 });
 
 function shipAction(actionKey){
