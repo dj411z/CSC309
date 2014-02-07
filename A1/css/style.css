@@ -14,13 +14,13 @@ h2 {
 }
 #lives1 {
 	position: relative;
-	top: 5px;
+	top: 10px;
 	left: 720px; 
 
 }
 #currscore1 {
 	position: relative;
-	top: 80px;
+	top: 50px;
 	left: 300px; 
 }
 #canvas{

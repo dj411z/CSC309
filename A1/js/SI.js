@@ -391,7 +391,7 @@ GameoverState.prototype.draw = function(){
 function updateScore() {
 
   var score = document.getElementById("currscore");
-  score.innerHTML = currscore;
+  score.innerHTML = "Current Score: " + currscore;
 
 }
 
@@ -402,6 +402,6 @@ function levelUp() {
   shiftAm += 1;
   points += 10
   var lev = document.getElementById("level");
-  lev.innerHTML = level;
+  lev.innerHTML = "Level: " + level;
 
 };
