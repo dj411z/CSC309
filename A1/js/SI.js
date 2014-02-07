@@ -272,7 +272,7 @@ function shiftDown(){
   for (var i = 0; i < aliens.length; i++){
     var a = aliens[i];
 
-    a.y += shiftAm;
+    a.y += 10;
   }
 
 }
@@ -381,9 +381,9 @@ GameoverState.prototype.draw = function(){
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = "blue";
   context.font = "bold 40px Arial";
-  context.fillText("Game over!", 200, 250);
-  context.fillText("Score: " + currscore , 200, 350);
-  context.fillText("Level: " + level , 200, 450);
+  context.fillText("Game over!", 200, 150);
+  context.fillText("Score: " + currscore , 200, 250);
+  context.fillText("Level: " + level , 200, 350);
   //display score and level
   window.setTimeout("location.reload()", 5000);
 }
