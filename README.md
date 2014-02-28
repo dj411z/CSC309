@@ -1,4 +1,6 @@
 CSC309
+Fady Anees - 999088222 - g2aneesf
+Dennis Jiang - 998827943 - g3jiangd
 ======
 Global Variables:
 

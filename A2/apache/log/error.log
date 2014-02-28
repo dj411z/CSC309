@@ -1,0 +1,3 @@
+[Fri Feb 28 14:14:25 2014] [notice] Apache/2.2.22 (Ubuntu) PHP/5.3.10-1ubuntu3.9 with Suhosin-Patch configured -- resuming normal operations
+[Fri Feb 28 14:16:11 2014] [error] [client 127.0.0.1] File does not exist: /h/u9/g2/00/g2aneesf/CSC309/A2/apache/htdocs/favicon.ico
+[Fri Feb 28 14:16:11 2014] [error] [client 127.0.0.1] File does not exist: /h/u9/g2/00/g2aneesf/CSC309/A2/apache/htdocs/favicon.ico
