@@ -23,7 +23,7 @@ class CandyStore extends CI_Controller {
     		$this->load->model('product_model');
     		$products = $this->product_model->getAll();
     		$data['products']=$products;
-    		$this->load->view('product/list.php',$data);
+    		$this->load->view('register/regForm.php',$data);
     }
     
     function newForm() {
