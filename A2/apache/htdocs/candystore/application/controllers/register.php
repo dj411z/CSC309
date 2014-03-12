@@ -8,29 +8,31 @@ class Register extends CI_Controller {
 	}
 
 	function index(){
-		$this->load->view('register/regForm.php');
+
+		$this->load->view('user/regForm.php');
 	}
 
-	function register(){
+	function create(){
 
 		$this->load->library('form_validation');
 
 		$this->form_validation->set_rules('email', 'Email', 'required|callback_email_check');
 
+		$this->form_validation->set_rules('firstName', 'First Name', 'required');
 
-		// $this->form_validation->set_rules('creditcardNum', 'Credit Card Number', 'required');
+		$this->form_validation->set_rules('lastName', 'Last Name', 'required');
 
-		// $this->form_validation->set_rules('creditcardEx', 'Credit Card Expiry Date', 'required');
+		$this->form_validation->set_rules('login', 'Login ID', 'required');
 
 		$this->form_validation->set_rules('password', 'Password', 'required|minlength[6]');
 
 		$this->form_validation->set_rules('passconf', 'Password Confirmation', 'required|matches[password]');
 
 		if($this->form_validation->run() == FALSE){
-			$this->load->view('register/regForm.php');
+			$this->load->view('user/regForm.php');
 		}
 		else{
-			$this->load->view('product/list.php');
+			$this->load->view('controller.php');
 		}
 	}
 

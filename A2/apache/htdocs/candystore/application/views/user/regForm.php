@@ -28,12 +28,20 @@
 	<h1>User Registration</h1>
 	<?php
 
-		echo form_open('register/register');
-		echo form_label('Email');
-		echo form_error('email');
-		echo form_input('email', set_value("email"), 
-			"required pattern='^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$' title='Invalid Email'");
+		echo form_open('register/create');
 		
+		echo form_label('First Name');
+		echo form_error('firstName');
+		echo form_input('firstName', "", "required")
+
+		echo form_label('Last Name');
+		echo form_error('lastName');
+		echo form_input('lastName', "", "required")
+
+		echo form_label('Login ID');
+		echo form_error('login');
+		echo form_input('login', "", "required")
+
 		echo form_label('Password');
 		echo form_error('password');
 		echo form_input('password', "","id='pass1' required");
@@ -41,6 +49,11 @@
 		echo form_label('Password Confirmation');
 		echo form_error('passconf');
 		echo form_input('passconf', "","id='pass2' required oninput=checkPassword()");
+
+		echo form_label('Email');
+		echo form_error('email');
+		echo form_input('email', set_value("email"), 
+			"required pattern='^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$' title='Invalid Email'");
 
 		echo form_submit('submit', 'Register');
 		echo form_close();
