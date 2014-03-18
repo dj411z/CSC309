@@ -9,7 +9,7 @@ class Register extends CI_Controller {
 
 	function index(){
 
-		$this->load->view('user/regForm.php');
+		$this->load->view('regForm.php');
 	}
 
 	function create(){
@@ -32,7 +32,7 @@ class Register extends CI_Controller {
 			$this->load->view('user/regForm.php');
 		}
 		else{
-			$this->load->view('controller.php');
+			$this->load->view('product/list_candy.php');
 		}
 	}
 
@@ -45,4 +45,4 @@ class Register extends CI_Controller {
 		}
 		return true;
 	}
- ?>
+}

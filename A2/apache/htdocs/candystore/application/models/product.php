@@ -1,6 +1,6 @@
 <?php
 class Product  {
-	public $id;
+	public $number;
 	public $name;
 	public $description;
 	public $price;

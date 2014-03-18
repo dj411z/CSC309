@@ -34,4 +34,3 @@
 	echo form_submit('submit', 'Create');
 	echo form_close();
 ?>	
-

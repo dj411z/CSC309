@@ -32,16 +32,16 @@
 		
 		echo form_label('First Name');
 		echo form_error('firstName');
-		echo form_input('firstName', "", "required")
+		echo form_input('firstName', "", "required");
 
 		echo form_label('Last Name');
 		echo form_error('lastName');
-		echo form_input('lastName', "", "required")
+		echo form_input('lastName', "", "required");
 
 		echo form_label('Login ID');
 		echo form_error('login');
-		echo form_input('login', "", "required")
-
+		echo form_input('login', "", "required");
+		
 		echo form_label('Password');
 		echo form_error('password');
 		echo form_input('password', "","id='pass1' required");
