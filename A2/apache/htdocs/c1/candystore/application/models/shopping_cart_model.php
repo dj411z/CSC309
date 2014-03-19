@@ -1,7 +1,7 @@
 <?php
 class Shopping_cart_model extends CI_Model {
 
-	session_start();
+	
 	function getItems($id){
 		return $id->items;
 	}

@@ -1,9 +1,9 @@
 <h2>Cart Items</h2>
 <?php 
-		
+
 		echo "<table>";
 		echo "<tr><th>Name</th><th>Description</th><th>Price</th><th>Photo</th></tr>";
-		echo sizeof($cart_items);
+		
 		foreach ($cart_items as $item) {
 			echo "<tr>";
 			echo "<td>" . $item->name . "</td>";

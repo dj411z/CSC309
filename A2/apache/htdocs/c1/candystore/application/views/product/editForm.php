@@ -6,9 +6,9 @@
 </style>
 
 <?php 
-	echo "<p>" . anchor('candystore/index','Back') . "</p>";
+	echo "<p>" . anchor('admin_products/index','Back') . "</p>";
 	
-	echo form_open("candystore/update/$product->id");
+	echo form_open("admin_products/update/$product->id");
 	
 	echo form_label('Name'); 
 	echo form_error('name');

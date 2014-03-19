@@ -1,6 +1,6 @@
 <?php
 
-class Email extends CI_Controller {
+class Email_controller extends CI_Controller {
    
      
     function __construct() {
@@ -17,27 +17,31 @@ class Email extends CI_Controller {
 
     function showAll() {
     	$data['title'] ='email';
-    	$data['main'] ='email/email.php';
+    	$data['main'] ='email_send/email.php';
     	$data['admin'] = false;
     	$this->load->view('template.php',$data);
+
     }
     
-	function sendEmail($email) {
+	function sendEmail() {
 		$this->load->library('email');
 
 		$this->email->from('dennis.jiang411z@gmail.com', 'Dennis Jiang');
-		$this->email->to("$email");
+		$this->email->to("dj411z@yahoo.com");
 
 		$this->email->subject('Candystore Receipt');
-		$this->email->message('Here is your receipt.';
+		$this->email->message('Here is your receipt');
 
 		//cannot attach receipt file because not a file / hard to do
 
 		$this->email->send();
 
 		echo $this->email->print_debugger();
-		redirect('email/showAll', 'refresh');
+		redirect('email_controller/showAll', 'refresh');
 	}
 
       
 }
+
+
+?>

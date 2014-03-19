@@ -16,13 +16,12 @@ class Shopping_cart extends CI_Controller {
 */
 	    		    	
 	    	$this->load->library('upload', $config);
+	    	$this->load->library('session');
 
-	    	session_start();
-	    	// header("Cache-Control: no-cache, must-revalidate");
 	    	$items = array();
-	    	$test = 0;
-	    	$_SESSION["items"] = $items;
-	    	$_SESSION['test'] = $test;
+	 
+	    	$this->session->set_userdata('items', $items);
+	 
 	    	
 	    	
     }
@@ -30,8 +29,8 @@ class Shopping_cart extends CI_Controller {
     function showAll() {
     	// $this->load->model('shopping_cart_model');
     	// $cart_items = $this->shopping_cart_model->getItems();
-    	echo $_SESSION['test'];
-    	$data['cart_items'] = $_SESSION['items'];
+    	$i = $this->session->userdata('items');
+    	$data['cart_items'] = $i;
     	$data['title'] ='cart items';
     	$data['main'] ='cart/list.php';
     	$data['admin'] = false;
@@ -48,9 +47,10 @@ class Shopping_cart extends CI_Controller {
 	function addToCart($id){
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
-		array_push($_SESSION['items'], $product);
-		$_SESSION['test'] += 1;
-		echo sizeof($_SESSION['items']);
+		$i = $this->session->userdata('items');
+		array_push($i, $product);
+		$this->session->set_userdata('items', $i);
+		$f = $this->session->userdata('items');
 		redirect('main/showAll', 'refresh');
 
 	}
