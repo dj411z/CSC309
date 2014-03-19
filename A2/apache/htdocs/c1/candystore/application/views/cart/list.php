@@ -12,7 +12,7 @@
 			echo "<td>" . $item->price . "</td>";
 			echo "<td><img src='" . base_url() . "images/product/" . $item->photo_url . "' width='100px' /></td>";
 
-			// echo "<td>" . anchor("shopping_cart/delete/$customer->id",'Remove from cart',"onClick='return confirm(\"Do you really want to delete this record?\");'") . "</td>";
+			echo "<td>" . anchor("shopping_cart/delete/$item->id",'Remove from cart',"onClick='return confirm(\"Do you really want to delete this record?\");'") . "</td>";
 			echo "<td>" . anchor("shopping_cart/read/$item->id",'View') . "</td>";
 				
 			echo "</tr>";

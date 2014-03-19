@@ -42,13 +42,12 @@ class Admin_customers extends CI_Controller {
         $customerIDarray = array();
         
         foreach ($customers as $customer) {
-            $customerIDarray.push($customer->id);
+            array_push($customerIDarray, $customer->id);
         }
 
+        echo sizeof($customerIDarray);
         foreach ($customerIDarray as $customerID) {
-            if (isset($customerID)){
-                 $this->customer_model->delete($customerID);
-            }
+             $this->customer_model->delete($customerID);
         }
 
         redirect('admin_customers/showAll', 'refresh');

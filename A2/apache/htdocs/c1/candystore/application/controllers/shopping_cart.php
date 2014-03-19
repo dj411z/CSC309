@@ -25,8 +25,6 @@ class Shopping_cart extends CI_Controller {
     }
 
     function showAll() {
-    	// $this->load->model('shopping_cart_model');
-    	// $cart_items = $this->shopping_cart_model->getItems();
     	$data['cart_items'] = $_SESSION['items'];
     	$data['title'] ='cart items';
     	$data['main'] ='cart/list.php';
@@ -45,21 +43,16 @@ class Shopping_cart extends CI_Controller {
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
 		$i = $_SESSION['items'];
-		$i[] = $product;
+		$i[$id] = $product;
 		$_SESSION['items'] = $i;
-
-		$data['cart_items'] = $_SESSION['items'];
-    	$data['title'] ='cart items';
-    	$data['main'] ='cart/list.php';
-    	$data['admin'] = false;
-    	$this->load->view('template.php',$data);
+		redirect('shopping_cart/showAll', 'refresh');
 	}
 	 	
 	function delete($id) {
 		$this->load->model('shopping_cart_model');
-		
-		if (isset($id)) 
-			$this->shopping_cart_model->delete($id);
+		$i = $_SESSION['items'];
+		unset($i[$id]);
+		$_SESSION['items'] = $i;
 		
 		//Then we redirect to the index page again
 		redirect('shopping_cart/showAll', 'refresh');
