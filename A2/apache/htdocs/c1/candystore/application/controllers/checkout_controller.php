@@ -16,7 +16,7 @@ class Checkout_controller extends CI_Controller {
     	$this->load->view('template.php',$data);
     }
     
-	function fillForm($id) {
+	function fillForm() {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('first','FirstName','required');
 		$this->form_validation->set_rules('last','LastName','required');
@@ -26,30 +26,23 @@ class Checkout_controller extends CI_Controller {
 		$this->form_validation->set_rules('creditcard_year','Creditcard Expiry Year','required');
 		
 		if ($this->form_validation->run() == true) {
-			$customer = new Customer();
-			$customer->first = $this->input->get_post('firstName');
-			$customer->last = $this->input->get_post('lastName');
-			$customer->login = $this->input->get_post('login');
-			$customer->password = $this->input->get_post('password');
-			$customer->email = $this->input->get_post('email');
-			
-			$this->load->model('customer_model');
-			$this->customer_model->update($customer);
+			$order = new Order();
+			//$order->customer_id = 
+			$order->order_date = date('m-d-Y');
+			$order->order_time = date('H:i');
+			//$order->total = 
+			$order->creditcard_number = $this->input->get_post('creditcard_number');
+			$order->creditcard_month = $this->input->get_post('creditcard_month');
+			$order->creditcard_year = $this->input->get_post('creditcard_year');
+
+			$this->load->model('order_model');
+			$this->order_model->update($order);
 			//Then we redirect to the index page again
-			redirect('user_account_controller/showAll', 'refresh');
+			redirect('checkout_controller/showAll', 'refresh');
 		}
 		else {
-			$customer = new Customer();
-			$customer->id = $id;
-			$customer->first = set_value('first');
-			$customer->last = set_value('last');
-			$customer->email = set_value('email');
-			$customer->login = set_value('login');
-			$customer->password = set_value('password');
-
-			$data['customer']=$customer;
-			$data['main'] = 'account/editAccount.php';
-			$this->load->view('template.php', $data);
+			echo "Checkout didn't work";
+			redirect('checkout_controller/showAll', 'refresh');
 	}
 
 		//found online
