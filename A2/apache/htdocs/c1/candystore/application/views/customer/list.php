@@ -17,5 +17,7 @@
 			echo "</tr>";
 		}
 		echo "<table>";
+
+		echo anchor("admin_customers/deleteAll",'Delete All Info',"onClick='return confirm(\"Do you really want to delete all customer and order information?\");'");
 ?>	
 

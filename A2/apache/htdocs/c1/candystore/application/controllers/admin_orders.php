@@ -8,13 +8,6 @@ class Admin_orders extends CI_Controller {
 	    	parent::__construct();
     }
 
-    // function index() {
-    // 		$this->load->model('product_model');
-    // 		$products = $this->product_model->getAll();
-    // 		$data['products']=$products;
-    // 		$this->load->view('template.php',$data);
-    // }
-
     function showAll() {
     	$this->load->model('final_order_model');
     	$orders = $this->final_order_model->get();
@@ -22,7 +15,7 @@ class Admin_orders extends CI_Controller {
     	$data['title'] ='orders';
     	$data['main'] ='order/list.php';
     	$data['admin'] = true;
-    	// $this->load->view('template.php',$data);
+    	$this->load->view('template.php',$data);
     }
     
 	function read() {

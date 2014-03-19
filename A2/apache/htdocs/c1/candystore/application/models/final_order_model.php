@@ -9,9 +9,9 @@ class Final_order_model extends CI_Model {
 	
 	function get()
 	{
-		$query = $this->db->query("select * from `order`;");
-		
-		// $query = $this->db->query("select * from order_item;");
+		$query = $this->db->query("select o.id as 'order_id', c.first as 'first', c.last as 'last', o.order_date as 'order_date', o.total as 'total'
+									from customer c, `order` o
+									where o.customer_id = c.id;");
 		return $query->result();
 	}
 

@@ -8,13 +8,6 @@ class Admin_customers extends CI_Controller {
 	    	parent::__construct();
     }
 
-    // function index() {
-    // 		$this->load->model('product_model');
-    // 		$products = $this->product_model->getAll();
-    // 		$data['products']=$products;
-    // 		$this->load->view('template.php',$data);
-    // }
-
     function showAll() {
     	$this->load->model('customer_model');
     	$customers = $this->customer_model->getAll();
@@ -41,6 +34,25 @@ class Admin_customers extends CI_Controller {
 		//Then we redirect to the index page again
 		redirect('admin_customers/showAll', 'refresh');
 	}
+
+    function deleteAll() {
+        $this->load->model('customer_model');
+        $customers = $this->customer_model->getAll();
+
+        $customerIDarray = array();
+        
+        foreach ($customers as $customer) {
+            $customerIDarray.push($customer->id);
+        }
+
+        foreach ($customerIDarray as $customerID) {
+            if (isset($customerID)){
+                 $this->customer_model->delete($customerID);
+            }
+        }
+
+        redirect('admin_customers/showAll', 'refresh');
+    }
       
 }
 
