@@ -10,13 +10,13 @@ class User_account_controller extends CI_Controller {
     }
     //edit first and last names, login, email, and password
 
-    function showAll() {
+    function showAll($customerId) {
     	$this->load->model('customer_model');
-    	$customer = $this->customer_model->get($customerID);
-
+    	$customer = $this->customer_model->get($customerId);
+    	$data['customer'] = $customer;
     	$data['title'] ='account info';
-    	$data['main'] ='account/list.php';
-    	$data['admin'] = true;
+    	$data['main'] ='account/editAccount.php';
+    	$data['admin'] = false;
     	$this->load->view('template.php',$data);
     }
 	

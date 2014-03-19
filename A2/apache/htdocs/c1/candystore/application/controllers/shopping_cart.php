@@ -16,21 +16,18 @@ class Shopping_cart extends CI_Controller {
 */
 	    		    	
 	    	$this->load->library('upload', $config);
-	    	$this->load->library('session');
-
-	    	$items = array();
-	 
-	    	$this->session->set_userdata('items', $items);
-	 
-	    	
-	    	
+	    	session_start();
+	    	if(!isset($_SESSION['items'])){
+	    		$items = array();
+	    		$_SESSION['items'] = $items;
+	    	}
+	    	   	
     }
 
     function showAll() {
     	// $this->load->model('shopping_cart_model');
     	// $cart_items = $this->shopping_cart_model->getItems();
-    	$i = $this->session->userdata('items');
-    	$data['cart_items'] = $i;
+    	$data['cart_items'] = $_SESSION['items'];
     	$data['title'] ='cart items';
     	$data['main'] ='cart/list.php';
     	$data['admin'] = false;
@@ -47,12 +44,15 @@ class Shopping_cart extends CI_Controller {
 	function addToCart($id){
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
-		$i = $this->session->userdata('items');
-		array_push($i, $product);
-		$this->session->set_userdata('items', $i);
-		$f = $this->session->userdata('items');
-		redirect('main/showAll', 'refresh');
+		$i = $_SESSION['items'];
+		$i[] = $product;
+		$_SESSION['items'] = $i;
 
+		$data['cart_items'] = $_SESSION['items'];
+    	$data['title'] ='cart items';
+    	$data['main'] ='cart/list.php';
+    	$data['admin'] = false;
+    	$this->load->view('template.php',$data);
 	}
 	 	
 	function delete($id) {
