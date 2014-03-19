@@ -86,7 +86,7 @@ class Main extends CI_Controller {
 				else if($customer->login == $this->input->get_post('login') &&
 					$customer->password == $this->input->get_post('password')){
 					$correctUser = true;
-					//also save correct customer to use later on? shopping cart / account stuff
+					//also save correct customer to use later on for account stuff
 					$data['customerId'] = $customer->id;
 					break;
 				}
