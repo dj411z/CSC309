@@ -9,7 +9,7 @@ class Final_order_model extends CI_Model {
 	
 	function get()
 	{
-		$query = $this->db->query("select * from order;");
+		$query = $this->db->query("select * from `order`;");
 		
 		// $query = $this->db->query("select * from order_item;");
 		return $query->result();
