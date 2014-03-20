@@ -13,7 +13,7 @@ class Customer_model extends CI_Model {
 		
 		return $query->row(0,'Customer');
 	}
-	
+
 	function delete($id) {
 		return $this->db->delete("customer",array('id' => $id ));
 	}

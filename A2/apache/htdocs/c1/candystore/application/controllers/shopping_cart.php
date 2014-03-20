@@ -25,7 +25,11 @@ class Shopping_cart extends CI_Controller {
     }
 
     function showAll() {
+    	$this->load->model('shopping_cart_model');
+    	$total = $this->shopping_cart_model->getTotal();
+    	$_SESSION['total'] = $total;
     	$data['cart_items'] = $_SESSION['items'];
+    	$data['total'] = $total;
     	$data['title'] ='cart items';
     	$data['main'] ='cart/list.php';
     	$data['admin'] = false;
@@ -41,18 +45,40 @@ class Shopping_cart extends CI_Controller {
 
 	function addToCart($id){
 		$this->load->model('product_model');
+		$this->load->model('shopping_cart_model');
+
 		$product = $this->product_model->get($id);
-		$i = $_SESSION['items'];
-		$i[$id] = $product;
-		$_SESSION['items'] = $i;
+		$this->shopping_cart_model->insert($id, $product);
+		
 		redirect('shopping_cart/showAll', 'refresh');
 	}
 	 	
 	function delete($id) {
 		$this->load->model('shopping_cart_model');
-		$i = $_SESSION['items'];
-		unset($i[$id]);
-		$_SESSION['items'] = $i;
+		$this->shopping_cart_model->delete($id);
+		
+		//Then we redirect to the index page again
+		redirect('shopping_cart/showAll', 'refresh');
+	}
+
+	function add($id) {
+		$this->load->model('shopping_cart_model');
+		$this->shopping_cart_model->add($id);
+		
+		//Then we redirect to the index page again
+		redirect('shopping_cart/showAll', 'refresh');
+	}
+
+	function subtract($id) {
+		$this->load->model('shopping_cart_model');
+		
+
+		if ($_SESSION['items'][$id][1] == 0){
+			$this->shopping_cart_model->delete($id);
+		}
+		else{
+			$this->shopping_cart_model->subtract($id);
+		}
 		
 		//Then we redirect to the index page again
 		redirect('shopping_cart/showAll', 'refresh');

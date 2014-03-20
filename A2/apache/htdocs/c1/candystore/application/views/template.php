@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset=utf-8" />
-  <title><?php session_start(); echo $title; ?></title>
+  <title><?php echo $title; ?></title>
   <link rel="stylesheet" href="<?=  base_url(); ?>css/template.css">
 </head>
 <body>

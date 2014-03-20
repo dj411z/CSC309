@@ -1,6 +1,7 @@
 <h2>Product Entry</h2>
 <?php 
-	echo "<p>" . anchor('admin_products/showAll','Back') . "</p>";
+	$referer = $_SERVER["HTTP_REFERER"];
+	echo "<p>" . anchor("$referer", 'Back') . "</p>";
 
 	echo "<p> ID = " . $product->id . "</p>";
 	echo "<p> NAME = " . $product->name . "</p>";

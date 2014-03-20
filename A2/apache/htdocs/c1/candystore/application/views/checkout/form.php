@@ -17,6 +17,7 @@
 				ccnum.setCustomValidity("Invalid Creditcard Number Length.");
 				return false;
 			}
+		}
 
 		function checkCCExpire(){
 
@@ -39,10 +40,10 @@
 
 
 <?php 
-	echo "<p>" . anchor('checkout_controller/showAll','Back') . "</p>";
+	echo "<p>" . anchor('shopping_cart/showAll','Back') . "</p>";
 
 	echo form_open_multipart('checkout_controller/fillForm');
-		
+
 	echo form_label('First Name'); 
 	echo form_error('firstName');
 	echo form_input('firstName',$customer->first,"required");
@@ -64,7 +65,7 @@
 	echo form_error('creditcard_month');
 	echo form_input('creditcard_month', "", "id='cc_month' required");
 
-	echo form_label('Creditcard Number');
+	echo form_label('Creditcard Expiry Year');
 	echo form_error('creditcard_year');
 	echo form_input('creditcard_year', "", "id='cc_year' required oninput=checkCCExpire()");
 

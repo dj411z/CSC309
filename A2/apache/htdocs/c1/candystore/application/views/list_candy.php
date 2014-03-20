@@ -18,10 +18,10 @@
 			echo "<td>" . $candy->description . "</td>";
 			echo "<td>" . $candy->price . "</td>";
 			
-			//echo "<td>" . anchor("transaction/recordSale/$flight->id",'Ticket') . "</td>";
 			echo "<td>" . anchor("shopping_cart/addToCart/$candy->id",'Buy') . "</td>";
 				
 			echo "</tr>";
+
 		}
 		echo "<table>";
 		

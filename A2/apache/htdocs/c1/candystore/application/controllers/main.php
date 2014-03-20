@@ -5,9 +5,8 @@ class Main extends CI_Controller {
     function __construct() {
     		// Call the Controller constructor
 	    	parent::__construct();
+	    	session_start();
 
-	    	
- 	
     }
 
     function showAll() {
@@ -52,6 +51,7 @@ class Main extends CI_Controller {
 			$customer->email = $this->input->get_post('email');
 
 			$this->customer_model->insert($customer);
+			
 
 			$data['msg'] = 'Account successfully created. Please login now.'; 
 			//Then we redirect to the index page again
@@ -89,7 +89,7 @@ class Main extends CI_Controller {
 					$customer->password == $this->input->get_post('password')){
 					$correctUser = true;
 					//also save correct customer to use later on for account stuff
-					$data['customerId'] = $customer->id;
+					$_SESSION['customerId'] = $customer->id;
 					break;
 				}
 			}
