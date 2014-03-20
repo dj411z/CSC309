@@ -45,7 +45,6 @@ class Admin_customers extends CI_Controller {
             array_push($customerIDarray, $customer->id);
         }
 
-        echo sizeof($customerIDarray);
         foreach ($customerIDarray as $customerID) {
              $this->customer_model->delete($customerID);
         }

@@ -4,7 +4,6 @@
 
 	
 	echo "<tr>";
-	echo "<td>" . anchor("admin_customers/read/$final_order->customer_id",'View') . "</td>";
 	echo "<td>" . $final_order->first . "</td>";
 	echo "<td>" . $final_order->last . "</td>";
 	echo "<td>" . $final_order->email . "</td>";
@@ -19,14 +18,12 @@
 	//link to display order items
 	echo "<td>" . anchor("admin_orders/showAll",'Items') . "</td>";
 
-
-	echo "<td>" . anchor("checkout_controller/openPrintable",'Print Receipt') . "</td>";
-
 	echo "</tr>";
 
 	echo "<table>";
 
+	
 	//hardcoded send email
 	echo "<p>" . anchor('email_controller/sendEmail','Send email') . "</p>";
-
+	echo "<td>" . anchor("checkout_controller/openPrintable",'Print Receipt') . "</td>";
 ?>

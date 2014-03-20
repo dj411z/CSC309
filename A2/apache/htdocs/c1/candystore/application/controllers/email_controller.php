@@ -6,6 +6,7 @@ class Email_controller extends CI_Controller {
     function __construct() {
     		// Call the Controller constructor
 	    	parent::__construct();
+	    	session_start();
 
 	    	//email configuration settings
 	    	$config['smtp_host'] = "smtp.gmail.com";
@@ -24,13 +25,16 @@ class Email_controller extends CI_Controller {
     }
     
 	function sendEmail() {
+
+		$final = $_SESSION['final_order']
 		$this->load->library('email');
 
-		$this->email->from('dennis.jiang411z@gmail.com', 'Dennis Jiang');
-		$this->email->to("dj411z@yahoo.com");
+		$this->email->from('dennis.jiang411z@gmail.com', 'Fady Anees');
+		echo gettype($final_order);
+		$this->email->to($final->email);
 
 		$this->email->subject('Candystore Receipt');
-		$this->email->message('Here is your receipt');
+		$this->email->message('Here is your receipt' . "\n\n");
 
 		//cannot attach receipt file because not a file / hard to do
 
@@ -39,7 +43,7 @@ class Email_controller extends CI_Controller {
 		echo $this->email->print_debugger();
 		//redirect('email_controller/showAll', 'refresh');
 		//also needs to empty the shopping cart after checking out
-		redirect('shopping_controller/showAll', 'refresh');
+		//redirect('shopping_cart/showAll', 'refresh');
 	}
 
       

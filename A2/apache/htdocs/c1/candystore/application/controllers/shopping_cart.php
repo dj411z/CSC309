@@ -73,7 +73,7 @@ class Shopping_cart extends CI_Controller {
 		$this->load->model('shopping_cart_model');
 		
 
-		if ($_SESSION['items'][$id][1] == 0){
+		if ($_SESSION['items'][$id][1] == 1){
 			$this->shopping_cart_model->delete($id);
 		}
 		else{

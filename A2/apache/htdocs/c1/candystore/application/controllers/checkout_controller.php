@@ -60,13 +60,39 @@ class Checkout_controller extends CI_Controller {
 				$order_item->quantity = $item[1];
 				$this->order_item_model->insert($order_item);
 			}
+
+			//make final_order object here
+
+			$this->load->model('final_order');
+
+			$final_order = new Final_order();
+			$final_order->order_id = $order->id;
+
+			$final_order->first= $this->input->get_post('firstName');
+			$final_order->last = $this->input->get_post('lastName');
+			$final_order->email= $this->input->get_post('email');
+			$final_order->creditcard_number = $this->input->get_post('creditcard_number');
+			$final_order->creditcard_month = $this->input->get_post('creditcard_month');
+			$final_order->creditcard_year = $this->input->get_post('creditcard_year');
+
+			$final_order->order_date = date('m-d-Y');
+			$final_order->order_time = date('H:i');
+			$final_order->total = $_SESSION['total'];
+
+			$data['final_order'] = $final_order;
+			$data['email'] = $final_order->email;
+
 			//Clear shopping cart 
-			$_SESSION = array();
+			$_SESSION['items'] = array();
 			setcookie('items');
 			
 			//Then we redirect to the index page again
 			//redirect('main/showAll', 'refresh');
-			redirect('checkout_controller/displayReceipt', 'refresh');
+			//redirect('checkout_controller/displayReceipt', 'refresh');
+			$data['title'] ='receipt';
+	    	$data['main'] ='checkout/receipt.php';
+	    	$data['admin'] = false;
+	    	$this->load->view('template.php', $data);
 		}
 		else {
 				echo "Checkout didn't work";
@@ -91,56 +117,14 @@ class Checkout_controller extends CI_Controller {
 		// 	}
 		// }
 
-	function displayReceipt() {
+	function displayPrintable() {
 		//display finalized order information with a button to display printable receipt, and button to send email
+		//$data['final_order'] = 
 		$data['title'] ='receipt';
     	$data['main'] ='checkout/receipt.php';
     	$data['admin'] = false;
     	$this->load->view('template.php', $data);
 	}
 
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script>
-	function openPrintable(){
-		top.wRef=window.open('', 'myconsole', 'width=500, height=450, left=10, top=10, 
-			menubar=1, toolbar=0, status=1, scrollbars=1, resizable=1')
-		top.wRef.document.writeIn(
-			//write receipt
-			'<html><head><title>Candystore Receipt</title></head>
-			<body><center><font color=red><b><i>Press Ctrl+P to print</i></b></font>
-			<?php 
-				echo "<table>";
-				echo "<tr><th>First</th><th>Last</th><th>Email</th><th>Creditcard Number</th><th>Expiry Month</th>
-					<th>Expiry Year</th><th>Order Date</th><th>Order Time</th><th>Total</th><th>Items</th></tr>";
-
-	
-					echo "<tr>";
-					echo "<td>" . anchor("admin_customers/read/$final_order->customer_id",'View') . "</td>";
-					echo "<td>" . $final_order->first . "</td>";
-					echo "<td>" . $final_order->last . "</td>";
-					echo "<td>" . $final_order->email . "</td>";
-
-					echo "<td>" . $final_order->creditcard_number . "</td>";
-					echo "<td>" . $final_order->creditcard_month . "</td>";
-					echo "<td>" . $final_order->creditcard_year . "</td>";
-					echo "<td>" . $final_order->order_date . "</td>";
-					echo "<td>" . $final_order->order_time . "</td>";
-					echo "<td>" . $final_order->total . "</td>";
-
-					//link to display order items
-					echo "<td>" . anchor("admin_orders/showAll",'Items') . "</td>";
-
-					echo "</tr>";
-
-					echo "<table>";
-
-			?>
-			</center></body></html>'
-		);
-		top.wRef.document.close();
-	}
-     </script>
 }
-
-
 ?>
