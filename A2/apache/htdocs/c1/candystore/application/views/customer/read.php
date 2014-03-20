@@ -1,5 +1,7 @@
 <h2>Customer Entry</h2>
 <?php 
+	
+
 	$referer = $_SERVER["HTTP_REFERER"];
 	echo "<p>" . anchor("$referer", 'Back') . "</p>";
 

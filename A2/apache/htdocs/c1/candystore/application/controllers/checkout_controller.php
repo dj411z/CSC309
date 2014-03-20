@@ -68,6 +68,7 @@ class Checkout_controller extends CI_Controller {
 			$final_order = new Final_order();
 			$final_order->order_id = $order->id;
 
+			$final_order->customer_id = $_SESSION['customerId'];
 			$final_order->first= $this->input->get_post('firstName');
 			$final_order->last = $this->input->get_post('lastName');
 			$final_order->email= $this->input->get_post('email');
@@ -80,7 +81,7 @@ class Checkout_controller extends CI_Controller {
 			$final_order->total = $_SESSION['total'];
 
 			$data['final_order'] = $final_order;
-			$data['email'] = $final_order->email;
+			$_SESSION['email'] = $final_order->email;
 
 			//Clear shopping cart 
 			$_SESSION['items'] = array();

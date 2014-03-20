@@ -26,12 +26,11 @@ class Email_controller extends CI_Controller {
     
 	function sendEmail() {
 
-		$final = $_SESSION['final_order']
+		$email = $_SESSION['email'];
 		$this->load->library('email');
 
-		$this->email->from('dennis.jiang411z@gmail.com', 'Fady Anees');
-		echo gettype($final_order);
-		$this->email->to($final->email);
+		$this->email->from('dennis.jiang411z@gmail.com', 'Dennis');
+		$this->email->to($email);
 
 		$this->email->subject('Candystore Receipt');
 		$this->email->message('Here is your receipt' . "\n\n");

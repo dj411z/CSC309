@@ -18,7 +18,7 @@ class Final_order_model extends CI_Model {
 
 	function get_order_items($order_id)
 	{
-		$query = $this->db->query("select * from `order_item`;");
+		$query = $this->db->query("select * from order_item;");
 		
 		return $query->result();
 		// $query = $this->db->query("select");

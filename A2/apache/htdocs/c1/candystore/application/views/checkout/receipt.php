@@ -24,6 +24,6 @@
 
 	
 	//hardcoded send email
-	echo "<p>" . anchor('email_controller/sendEmail','Send email') . "</p>";
+	echo "<p>" . anchor('email_controller/sendEmail/$final_order->id','Send email') . "</p>";
 	echo "<td>" . anchor("checkout_controller/openPrintable",'Print Receipt') . "</td>";
 ?>
