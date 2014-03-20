@@ -55,10 +55,10 @@ class Checkout_controller extends CI_Controller {
 
 			foreach ($i as $item) {
 				$order_item = new Order_item();
-				$order_item->order_id = $order->id;
+				$order_item->order_id = ($order->id);
 				$order_item->product_id = $item[0]->id;
 				$order_item->quantity = $item[1];
-				$this->order_item_model->insert($order_item);
+				$pass = $this->order_item_model->insert($order_item);
 			}
 
 			//make final_order object here
@@ -81,6 +81,7 @@ class Checkout_controller extends CI_Controller {
 			$final_order->total = $_SESSION['total'];
 
 			$data['final_order'] = $final_order;
+			$data['order_items'] = $i;
 			$_SESSION['email'] = $final_order->email;
 
 			//Clear shopping cart 

@@ -18,6 +18,7 @@
 			echo "<td>" . anchor("admin_orders/read_item_details/$order->id",'View') . "</td>";
 				
 			echo "</tr>";
+
 		}
 		echo "<table>";
 

@@ -19,7 +19,7 @@ class Admin_orders extends CI_Controller {
     	$data['admin'] = true;
     	$this->load->view('template.php',$data);
     }
-    
+
 	function read() {
 		$this->load->model('final_order_model');
 		$orders = $this->final_order_model->getAll();
@@ -28,8 +28,9 @@ class Admin_orders extends CI_Controller {
 	}
 
     function read_item_details($id) {
-        $this->load->model('final_order_model');
-        $order_items = $this->final_order_model->get_order_items($id);
+        // $this->load->model('final_order_model');
+        $this->load->model('order_item_model');
+        $order_items = $this->order_item_model->get($id);
         echo sizeof($order_items);
         $data['order_items'] = $order_items;
         $this->load->view('order/read.php',$data);

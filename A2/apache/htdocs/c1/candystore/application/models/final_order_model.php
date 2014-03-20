@@ -16,9 +16,9 @@ class Final_order_model extends CI_Model {
 		return $query->result();
 	}
 
-	function get_order_items($order_id)
+	function get_order_item()
 	{
-		$query = $this->db->query("select * from order_item;");
+		$query = $this->db->get('order_item');
 		
 		return $query->result();
 		// $query = $this->db->query("select");
@@ -30,7 +30,7 @@ class Final_order_model extends CI_Model {
 	}
 	
 	function delete($id) {
-		return $this->db->delete("order",array('id' => $id ));
+		return $this->db->delete("order", array('id' => $id));
 	}
 	
 	
