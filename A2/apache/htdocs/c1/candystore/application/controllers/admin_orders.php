@@ -1,5 +1,5 @@
 <?php
-
+//controller to give admin access to viewing and deleting orders from the database
 class Admin_orders extends CI_Controller {
    
      

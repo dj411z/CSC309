@@ -1,5 +1,5 @@
 <?php
-
+//controller to give admin access to viewing and deleting customers from the database
 class Admin_customers extends CI_Controller {
    
      

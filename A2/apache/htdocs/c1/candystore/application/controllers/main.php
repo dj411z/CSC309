@@ -1,5 +1,6 @@
 <?php
-
+//first controller that gets called
+//handles the account creation process (with validation of account details) and also login
 class Main extends CI_Controller {
    
     function __construct() {

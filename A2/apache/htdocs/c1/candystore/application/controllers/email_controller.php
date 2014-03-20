@@ -1,5 +1,6 @@
 <?php
 
+//controller sends a receipt in an email to the customer
 class Email_controller extends CI_Controller {
    
      
@@ -16,34 +17,24 @@ class Email_controller extends CI_Controller {
 
     }
 
-    function showAll() {
-    	$data['title'] ='email';
-    	$data['main'] ='email_send/email.php';
-    	$data['admin'] = false;
-    	$this->load->view('template.php',$data);
-
-    }
-    
 	function sendEmail() {
+		$final_order = $_SESSION['final_order'];
+		$receipt = "Name: $final_order->first $final_order->last \n Email: $final_order->email \n Creditcard Number: $final_order->creditcard_number
+		\n Expires: $final_order->creditcard_month / $final_order->creditcard_year \n Date of Order: $final_order->order_date at $final_order->order_time
+		\n Total in CAD: $final_order->total";
 
 		$email = $_SESSION['email'];
 		$this->load->library('email');
 
-		$this->email->from('dennis.jiang411z@gmail.com', 'Dennis');
+		$this->email->from('admin@candystore.com', 'Admin');
 		$this->email->to($email);
 
 		$this->email->subject('Candystore Receipt');
-		$this->email->message('Here is your receipt' . "\n\n");
-
-		//cannot attach receipt file because not a file / hard to do
+		$this->email->message("Thank you for your purchase. Here is your receipt: \n\n $receipt" . "\n\n");
 
 		$this->email->send();
 
-		echo $this->email->print_debugger();
-		//redirect('email_controller/showAll', 'refresh');
-		//also needs to empty the shopping cart after checking out
-		//redirect('shopping_cart/showAll', 'refresh');
+		redirect('shopping_cart/showAll', 'refresh');
 	}
 
-      
 }

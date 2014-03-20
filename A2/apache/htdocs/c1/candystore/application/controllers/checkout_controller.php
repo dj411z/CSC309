@@ -1,4 +1,6 @@
 <?php
+//controller to handle the checking out process
+//key method is the fillForm with form validation for checking correct creditcard info
 
 class Checkout_controller extends CI_Controller {
    
@@ -32,7 +34,7 @@ class Checkout_controller extends CI_Controller {
 		$this->form_validation->set_rules('first','FirstName','required');
 		$this->form_validation->set_rules('last','LastName','required');
 		$this->form_validation->set_rules('email','Email','required');
-		$this->form_validation->set_rules('creditcard_number','Creditcard Number','required|min_length[16]|max_length[16]');
+		$this->form_validation->set_rules('creditcard_number','Creditcard Number','required');
 		$this->form_validation->set_rules('creditcard_month','Creditcard Expiry Month','required');
 		$this->form_validation->set_rules('creditcard_year','Creditcard Expiry Year','required');
 	
@@ -81,6 +83,7 @@ class Checkout_controller extends CI_Controller {
 			$final_order->total = $_SESSION['total'];
 
 			$data['final_order'] = $final_order;
+			$_SESSION['final_order'] = $final_order;
 			$data['order_items'] = $i;
 			$_SESSION['email'] = $final_order->email;
 
@@ -100,32 +103,6 @@ class Checkout_controller extends CI_Controller {
 				echo "Checkout didn't work";
 				redirect('checkout_controller/newForm', 'refresh');
 			}
-	}
-
-		// //found online
-		// public function date_check($month, $year) {
-		// 	/* Get timestamp of midnight on day after expiration month. */
-		// 	$exp_ts = mktime(0, 0, 0, $month + 1, 1, $year);
-
-		// 	$cur_ts = time();
-		// 	 Don't validate for dates more than 10 years in future. 
-		// 	$max_ts = $cur_ts + (10 * 365 * 24 * 60 * 60);
-
-		// 	if ($exp_ts > $cur_ts && $exp_ts < $max_ts) {
-		// 		return true;
-		// 	} 
-		// 	else {
-		// 		return false;
-		// 	}
-		// }
-
-	function displayPrintable() {
-		//display finalized order information with a button to display printable receipt, and button to send email
-		//$data['final_order'] = 
-		$data['title'] ='receipt';
-    	$data['main'] ='checkout/receipt.php';
-    	$data['admin'] = false;
-    	$this->load->view('template.php', $data);
 	}
 
 }

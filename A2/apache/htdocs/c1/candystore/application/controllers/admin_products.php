@@ -1,5 +1,5 @@
 <?php
-
+//controller to give admin access to adding, viewing, editing, and deleting products from the database
 class Admin_products extends CI_Controller {
    
      

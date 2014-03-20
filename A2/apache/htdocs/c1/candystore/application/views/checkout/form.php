@@ -42,6 +42,8 @@
 <?php 
 	echo "<p>" . anchor('shopping_cart/showAll','Back') . "</p>";
 
+	echo validation_errors();
+	
 	echo form_open_multipart('checkout_controller/fillForm');
 
 	echo form_label('First Name'); 
