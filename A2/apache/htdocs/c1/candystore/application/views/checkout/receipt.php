@@ -23,12 +23,13 @@
 	echo "</table>";
 	echo "<table align='center' border='1' style='width:300px'>";
 	echo "<caption><strong>Products</strong></caption>";
-	echo "<tr><th>Name</th><th>Description</th><th>Price</th><th>Photo</th></tr>";
+	echo "<tr><th>Name</th><th>Description</th><th>Price</th><th>Quantity</th><th>Photo</th></tr>";
 
 	foreach ($order_items as $i) {
 		echo "<td>" . $i[0]->name . "</td>";
 			echo "<td>" . $i[0]->description . "</td>";
 			echo "<td>" . $i[0]->price . "</td>";
+			echo "<td>" . $i[1] . "</td>";
 			echo "<td><img src='" . base_url() . "images/product/" . $i[0]->photo_url . "' width='100px' /></td>";
 		echo "</tr>";
 	}
