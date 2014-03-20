@@ -37,11 +37,10 @@ class Email_controller extends CI_Controller {
 		$this->email->send();
 
 		echo $this->email->print_debugger();
-		redirect('email_controller/showAll', 'refresh');
+		//redirect('email_controller/showAll', 'refresh');
+		//also needs to empty the shopping cart after checking out
+		redirect('shopping_controller/showAll', 'refresh');
 	}
 
       
 }
-
-
-?>
