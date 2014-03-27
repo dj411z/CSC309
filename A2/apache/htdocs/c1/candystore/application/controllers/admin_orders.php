@@ -45,8 +45,7 @@ class Admin_orders extends CI_Controller {
         foreach ($orders as $order) {
             array_push($orderIDarray, $order->id);
         }
-
-        echo sizeof($orderIDarray);
+        
         foreach ($orderIDarray as $orderID) {
              $this->order_model->delete($orderID);
         }
