@@ -27,4 +27,8 @@ Views:
 How it all works:
 - Our website is very simple and the steps necessary from account creation -> checking out are intuitive and flow nicely.
 
-- We completed the majority of the functionality required from the assignment page.
+- While our website lacks visual appeal, we have successfully completed the majority of the functionality required from the assignment page.
+
+- There is an inexplicable error when the user clicks on the Print Receipt button after checking out. While testing, the correct window pops up but later, it has never worked. Please examine our code to see what the functionality should have been.
+
+- There are also some issues with validating the checkout form for creditcard info. While we have written Javascript functions to check for validity, they somehow always fail so we modified the form_validation->run() if statement to always allow for checking out. This issue with Javascript may or may not be tied in with the Print Receipt js.
