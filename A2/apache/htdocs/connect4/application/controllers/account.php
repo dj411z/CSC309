@@ -165,8 +165,8 @@ class Account extends CI_Controller {
 	    			$config['smtp_host']    = 'ssl://smtp.gmail.com';
 	    			$config['smtp_port']    = '465';
 	    			$config['smtp_timeout'] = '7';
-	    			$config['smtp_user']    = 'your gmail user name';
-	    			$config['smtp_pass']    = 'your gmail password';
+	    			$config['smtp_user']    = 'dennis.jiang411z@gmail.com';
+	    			$config['smtp_pass']    = 'candy923';
 	    			$config['charset']    = 'utf-8';
 	    			$config['newline']    = "\r\n";
 	    			$config['mailtype'] = 'text'; // or html
